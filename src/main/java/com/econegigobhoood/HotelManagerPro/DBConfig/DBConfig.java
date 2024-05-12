@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 
 public class DBConfig {
-  private static final String URL = "jdbc:postgresql://localhost:5432/postgres";;
+  private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
   private static final String USER = "sa";
   private static final String PASSWORD = "";
   private static Connection conexion;
@@ -18,7 +18,6 @@ public class DBConfig {
   public static Connection getConnection() throws SQLException {
     return DriverManager.getConnection(URL, USER, PASSWORD);
   }
-
   
     public static boolean hayConection() {
         return (conexion != null);

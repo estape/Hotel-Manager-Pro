@@ -5,12 +5,14 @@ public class DTOCliente {
     private String Nome;
     private String Rg;
     private int Idade;
+    private int IdCliente;
 
     public DTOCliente(){
 
     }
 
-    public DTOCliente(String Nome,String Rg, int Idade){
+    public DTOCliente(int IdCliente,String Nome,String Rg, int Idade){
+      this.IdCliente = IdCliente;
       this.Nome = Nome;
       this.Rg = Rg;
       this.Idade = Idade;
@@ -38,5 +40,14 @@ public class DTOCliente {
 
     public int setIdade(int idade) {
         return this.Idade = idade;
+    }
+
+
+    public int getIdCliente() {
+        return IdCliente;
+    }
+
+    public int setIdCliente(int IdCliente) {
+        return this.IdCliente = IdCliente;
     }
 }

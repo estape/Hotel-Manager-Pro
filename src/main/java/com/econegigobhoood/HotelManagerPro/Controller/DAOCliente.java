@@ -1,21 +1,24 @@
 package com.econegigobhoood.HotelManagerPro.Controller;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.modelmbean.ModelMBeanOperationInfo;
-import javax.swing.table.DefaultTableModel;
+//import javax.management.modelmbean.ModelMBeanOperationInfo;
+//import javax.swing.table.DefaultTableModel;
 
 
 import com.econegigobhoood.HotelManagerPro.DBConfig.DBConfig;
 import com.econegigobhoood.HotelManagerPro.Model.DTOCliente;
 
 public class DAOCliente {
-     public List<DAOCliente> listaLivros() {
-        List<DAOCliente> livros = new ArrayList<DAOCliente>();
-        String query = "SELECT * FROM Livros";
+    private Connection conexion;
+     public List<DTOCliente> listaClientes() {
+        
+        List<DTOCliente> cliente = new ArrayList<DTOCliente>();
+        String query = "SELECT * FROM Clientes";
 
         try {
             DBConfig.conectar();
@@ -23,18 +26,18 @@ public class DAOCliente {
             
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt("IdLivro");
-                String nome = rs.getString("Nome");
-                String autor = rs.getString("Autor");
-                int paginas = rs.getInt("Paginas");
-                String status = rs.getString("Status");
+                int IdCliente = rs.getInt("IdCliente");
+                String Nome = rs.getString("Nome");
+                String RG = rs.getString("RG");
+                int Idade = rs.getInt("Idade");
+            
 
-                DAOCliente DAOCliente = new DAOCliente (id, nome, autor, paginas, status);
+                DTOCliente DTOCliente = new DTOCliente (IdCliente,Nome,RG,Idade);
 
-                DAOCliente.add (DAOCliente);
+                cliente.add (DTOCliente);
             }
 
-            return livros;
+            return cliente;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
