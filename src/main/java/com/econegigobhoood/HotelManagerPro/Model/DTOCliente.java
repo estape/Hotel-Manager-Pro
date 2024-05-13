@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.Model;
+package com.econegigobhoood.HotelManagerPro.model;
 
 public class DTOCliente {
     

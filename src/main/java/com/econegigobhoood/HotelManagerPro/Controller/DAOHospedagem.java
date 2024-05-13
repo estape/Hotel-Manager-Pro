@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.Controller;
+package com.econegigobhoood.HotelManagerPro.controller;
 
 public class DAOHospedagem {
     

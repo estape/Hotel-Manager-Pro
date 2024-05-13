@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.Controller;
+package com.econegigobhoood.HotelManagerPro.controller;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 import com.econegigobhoood.HotelManagerPro.DBConfig.DBConfig;
-import com.econegigobhoood.HotelManagerPro.Model.DTOCliente;
+import com.econegigobhoood.HotelManagerPro.model.DTOCliente;
 
 public class DAOCliente {
     private Connection conexion;
