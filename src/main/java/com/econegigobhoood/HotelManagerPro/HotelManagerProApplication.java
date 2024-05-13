@@ -13,5 +13,4 @@ public class HotelManagerProApplication {
 
 		Misc.text(null, args);
 	}
-
 }
