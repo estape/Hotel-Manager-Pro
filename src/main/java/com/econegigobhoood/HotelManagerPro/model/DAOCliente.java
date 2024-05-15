@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.controller;
+package com.econegigobhoood.HotelManagerPro.model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,7 +11,7 @@ import java.util.List;
 
 
 import com.econegigobhoood.HotelManagerPro.DBConfig.DBConfig;
-import com.econegigobhoood.HotelManagerPro.model.DTOCliente;
+
 
 public class DAOCliente {
     private Connection conexion;
@@ -45,4 +45,27 @@ public class DAOCliente {
         }
         return null;
     }
+
+
+    public void insertarCliente(String nome, String rg,int idade, int idCliente) {
+        try {
+            DBConfig.conectar();
+            String consulta = "INSERT INTO Clientes (Nome, RG, Idade, IdCliente) VALUES (?, ?, ?, ?)";
+            PreparedStatement statement = conexion.prepareStatement(consulta);
+            statement.setString(1, (nome));
+            statement.setString(2, (rg));
+            statement.setInt(3, (idade));
+            statement.setInt(4, (idCliente));
+
+            statement.executeUpdate();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConfig.desconectar(); 
+        }
+    }
+
+
+
 }

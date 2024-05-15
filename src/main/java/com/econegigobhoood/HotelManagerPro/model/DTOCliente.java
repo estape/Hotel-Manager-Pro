@@ -1,6 +1,6 @@
 package com.econegigobhoood.HotelManagerPro.model;
 
-public class DTOCliente {
+public class DTOCliente extends DAOCliente {
     
     private String Nome;
     private String Rg;
@@ -49,5 +49,10 @@ public class DTOCliente {
 
     public int setIdCliente(int IdCliente) {
         return this.IdCliente = IdCliente;
+    }
+
+
+    public void incluircliente(){
+        this.insertarCliente(this.getNome(),this.getRg(),this.getIdade(),this.getIdCliente());
     }
 }
