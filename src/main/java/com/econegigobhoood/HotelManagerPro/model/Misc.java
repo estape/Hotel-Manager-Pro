@@ -120,17 +120,59 @@ public class Misc {
 
     /**
      * Imprimi na tela do usuário o valor String definido em 'msg', e se caso houver
-     * formatação,
-     * quaisquer variavéis devem ser inseridos em 'args'
+     * formatação, quaisquer variavéis devem ser inseridos em 'args'.
+     * Uma cor pode ser definida escrevendo a cor desejada, mais informações sobre cores:
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
      * 
      * @param msg  Texto em String.
+     * @param color Nome da cor, Ex: white
      * @param args Variavéis separados por virgula caso haja formatação.
      */
-    public static void text(String msg, Object... args) {
+    public static void text(String msg, String color, Object... args) {
+        int codeColor = 97;
+
+        switch (color) {
+            case "black":
+                codeColor = 30;
+            case "red":
+                codeColor = 31;
+            case "green":
+                codeColor = 32;
+            case "yellow":
+                codeColor = 33;
+            case "blue":
+                codeColor = 34;
+            case "magenta":
+                codeColor = 35;
+            case "cyan":
+                codeColor = 36;
+            case "white":
+                codeColor = 37;
+            case "bright black":
+                codeColor = 90;
+            case "bright red":
+                codeColor = 91;
+            case "bright green":
+                codeColor = 92;
+            case "bright yellow":
+                codeColor = 93;
+            case "bright blue":
+                codeColor = 94;
+            case "bright mangeta":
+                codeColor = 95;
+            case "bright cyan":
+                codeColor = 96;
+            case "bright white":
+                codeColor = 97;
+            default:
+                codeColor = 97;
+                break;
+        }
+        
         if (args == null) {
-            System.out.println(msg);
+            System.out.printf("\033[{0}m{1}\n", codeColor, msg);
         } else {
-            System.out.printf(msg + "\n", args);
+            System.out.printf("\\033[{0}m{1}\n",codeColor, msg, args);
         }
 
     }
@@ -162,11 +204,11 @@ public class Misc {
     }
 
     /**
-     * Altera a cor dtexto do console de acordo com a definição na entrada
+     * Altera a cor do texto do console de acordo com a definição na entrada
      * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Codes
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
      * 
-     * @param frontColor Nome da cor, Ex: bold
+     * @param frontColor Nome da cor, Ex: white
      */
     public static void colorForeground(String frontColor) {
         int codeColor = 0;
@@ -216,7 +258,7 @@ public class Misc {
     /**
      * Altera a cor de fundo do console de acordo com a definição na entrada
      * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Codes
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
      * 
      * @param backColor Nome da cor, Ex: white
      */
@@ -268,7 +310,7 @@ public class Misc {
     /**
      * Altera a cor de fundo do console de acordo com a definição na entrada
      * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Codes
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
      * 
      * @param font Nome da fonte, Ex: bold
      * @param underline Se o texto será sublinhado ou não.
