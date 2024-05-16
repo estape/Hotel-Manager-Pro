@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.econegigobhoood.HotelManagerPro.view.MainMenu;
 
 @SpringBootApplication
-public class HMPApplication {
+public class HotelManagerProApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HMPApplication.class, args);
+		SpringApplication.run(HotelManagerProApplication.class, args);
 
 		MainMenu.callMainMenu();
 	}
