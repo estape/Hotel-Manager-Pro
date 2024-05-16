@@ -6,10 +6,6 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-//import javax.management.modelmbean.ModelMBeanOperationInfo;
-//import javax.swing.table.DefaultTableModel;
-
-
 import com.econegigobhoood.HotelManagerPro.DBConfig.DBConfig;
 
 
@@ -26,13 +22,13 @@ public class DAOCliente {
             
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                int IdCliente = rs.getInt("IdCliente");
-                String Nome = rs.getString("Nome");
-                String RG = rs.getString("RG");
-                int Idade = rs.getInt("Idade");
+                int idCliente = rs.getInt("IdCliente");
+                String nome = rs.getString("Nome");
+                String rg = rs.getString("RG");
+                int idade = rs.getInt("Idade");
             
 
-                DTOCliente DTOCliente = new DTOCliente (IdCliente,Nome,RG,Idade);
+                DTOCliente DTOCliente = new DTOCliente (idCliente,nome,rg,idade);
 
                 cliente.add (DTOCliente);
             }
@@ -66,6 +62,69 @@ public class DAOCliente {
         }
     }
 
+    public void deletarCliente(int id){
+        String query = "DELETE FROM Cliente WHERE idCliente = ?";
+        
+        try {
+            DBConfig.conectar();
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setInt(1, id);
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConfig.desconectar(); 
+        }
+    }
+    
+
+    public void alterarCliente(String nome,String rg,int idade, int idCliente ){
+        String query = "UPDATE Clientes SET nome = ?, rg = ?, idade = ? WHERE idCliente = ?";
+
+        try {
+            DBConfig.conectar();
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setString(1, nome);
+            stmt.setString(2, rg);
+            stmt.setInt(3, idade);
+            stmt.setInt(4, idCliente);
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConfig.desconectar();
+        }
+    }
+
+    public DTOCliente selecionarcliente(int idCliente){
+        String query = "SELECT * FROM Livros WHERE IdLivro = ?";
+        
+        try {
+            DBConfig.conectar();
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setInt(1, idCliente);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                String rg = rs.getString("rg");
+                int idade = rs.getInt("idade");
+               
+
+                DTOCliente cliente = new DTOCliente(nome, rg, idade);
+                
+                return cliente;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBConfig.desconectar(); 
+        }
+        return null;
+    }
 
 
 }

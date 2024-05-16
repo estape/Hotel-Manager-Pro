@@ -7,8 +7,10 @@ public class DTOCliente extends DAOCliente {
     private int Idade;
     private int IdCliente;
 
-    public DTOCliente(){
-
+    public DTOCliente(String Nome,String Rg, int Idade){
+        this.Nome = Nome;
+        this.Rg = Rg;
+        this.Idade = Idade;
     }
 
     public DTOCliente(int IdCliente,String Nome,String Rg, int Idade){
