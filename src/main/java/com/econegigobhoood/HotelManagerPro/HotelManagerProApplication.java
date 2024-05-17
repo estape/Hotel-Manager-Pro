@@ -3,7 +3,7 @@ package com.econegigobhoood.HotelManagerPro;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.econegigobhoood.HotelManagerPro.view.MainMenu;
+import com.econegigobhoood.HotelManagerPro.config.DBConfig;
 
 @SpringBootApplication
 public class HotelManagerProApplication {
@@ -11,6 +11,7 @@ public class HotelManagerProApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HotelManagerProApplication.class, args);
 
-		MainMenu.callMainMenu();
+		// Inicializando o banco de dados
+		DBConfig.createTables();
 	}
 }

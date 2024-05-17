@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.econegigobhoood.HotelManagerPro.DBConfig.DBConfig;
+import com.econegigobhoood.HotelManagerPro.config.DBConfig;
 
 
 public class DAOCliente {
