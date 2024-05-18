@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.model;
+package com.econegigobhoood.HotelManagerPro.model.DTOs;
 
 public class DTOFuncionarios {
     private String Nome;
