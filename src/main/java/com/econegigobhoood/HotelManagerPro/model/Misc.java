@@ -8,15 +8,188 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 public class Misc {
 
+    /**
+     * Altera a cor do texto do console de acordo com a definição na entrada
+     * 'color', para mais informações acesse:
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
+     * 
+     * @param frontColor Nome da cor, Ex: white
+     */
+    public static void colorForeground(String frontColor) {
+        int codeColor = 97;
+
+        switch (frontColor) {
+            case "black":
+                codeColor = 30;
+                break;
+            case "red":
+                codeColor = 31;
+                break;
+            case "green":
+                codeColor = 32;
+                break;
+            case "yellow":
+                codeColor = 33;
+                break;
+            case "blue":
+                codeColor = 34;
+                break;
+            case "magenta":
+                codeColor = 35;
+                break;
+            case "cyan":
+                codeColor = 36;
+                break;
+            case "white":
+                codeColor = 37;
+                break;
+            case "bright black":
+                codeColor = 90;
+                break;
+            case "bright red":
+                codeColor = 91;
+                break;
+            case "bright green":
+                codeColor = 92;
+                break;
+            case "bright yellow":
+                codeColor = 93;
+                break;
+            case "bright blue":
+                codeColor = 94;
+                break;
+            case "bright magenta":
+                codeColor = 95;
+                break;
+            case "bright cyan":
+                codeColor = 96;
+                break;
+            case "bright white":
+                codeColor = 97;
+                break;
+            default:
+                codeColor = 97;
+                break;
+        }
+
+        // Usar %d para formatar o código de cor corretamente
+        System.out.printf("\033[%dm", codeColor);
+        clearScreen();
+    }
+
+    /**
+     * Altera a cor de fundo do console de acordo com a definição na entrada
+     * 'color', para mais informações acesse:
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
+     * 
+     * @param backColor Nome da cor, Ex: white
+     */
+    public static void colorBackground(String backColor) {
+        int codeColor = 40;
+
+        switch (backColor) {
+            case "black":
+                codeColor = 40;
+                break;
+            case "red":
+                codeColor = 41;
+                break;
+            case "green":
+                codeColor = 42;
+                break;
+            case "yellow":
+                codeColor = 43;
+                break;
+            case "blue":
+                codeColor = 44;
+                break;
+            case "magenta":
+                codeColor = 45;
+                break;
+            case "cyan":
+                codeColor = 46;
+                break;
+            case "white":
+                codeColor = 47;
+                break;
+            case "bright black":
+                codeColor = 100;
+                break;
+            case "bright red":
+                codeColor = 101;
+                break;
+            case "bright green":
+                codeColor = 102;
+                break;
+            case "bright yellow":
+                codeColor = 103;
+                break;
+            case "bright blue":
+                codeColor = 104;
+                break;
+            case "bright magenta":
+                codeColor = 105;
+                break;
+            case "bright cyan":
+                codeColor = 106;
+                break;
+            case "bright white":
+                codeColor = 107;
+                break;
+            default:
+                codeColor = 40;
+                break;
+        }
+
+        System.out.printf("\033[%dm", codeColor);
+        clearScreen();
+    }
+
+    /**
+     * Altera a cor de fundo do console de acordo com a definição na entrada
+     * 'color', para mais informações acesse:
+     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
+     * 
+     * @param font      Nome da fonte, Ex: bold
+     * @param underline Se o texto será sublinhado ou não.
+     */
+    public static void fontStyle(String font, Boolean underline) {
+        int codeFont = 0;
+
+        switch (font) {
+            case "normal":
+                codeFont = 22;
+                break;
+            case "bold":
+                codeFont = 1;
+                break;
+            case "green":
+                codeFont = 3;
+                break;
+            default:
+                codeFont = 22;
+                break;
+        }
+
+        if (underline) {
+            System.out.printf("\033[%d;1m", codeFont);
+            clearScreen();
+        } else {
+            System.out.printf("\033[%dm", codeFont);
+            clearScreen();
+        }
+    }
+
     // Tratativas de erros
-    public static final String SCANNER_INPUT_ERROR = "ERROR: Unable to set user input on Scanner.";
-    public static final String SCANNER_INVALID_ERROR = "ERROR: user input was invalid on Scanner. Wrong variable type?";
-    public static final String DATABASE_CONNECTION_ERROR = "ERROR: Unable to connect to the database.";
-    public static final String FILE_NOT_FOUND_ERROR = "ERROR: File not found.";
-    public static final String FILE_NOT_WRITED_ERROR = "ERROR: File can't be saved.";
-    public static final String FILE_NOT_DELETED_ERROR = "ERROR: File can't be deleted.";
+    public static final String SCANNER_INPUT_ERROR = "ERRO: Não foi possível definir a entrada do usuário no Scanner.\n\n";
+    public static final String SCANNER_INVALID_ERROR = "ERRO: A entrada do usuário no Scanner foi inválida. Tipo de variável incorreto?\n\n";
+    public static final String DATABASE_CONNECTION_ERROR = "ERRO: Não foi possível conectar ao banco de dados.\n\n";
+    public static final String FILE_NOT_FOUND_ERROR = "ERRO: Arquivo não encontrado.\n\n";
+    public static final String FILE_NOT_WRITED_ERROR = "ERRO: Não foi possível salvar o arquivo.\n\n";
+    public static final String FILE_NOT_DELETED_ERROR = "ERRO: Não foi possível excluir o arquivo.\n\n";
 
     private static Scanner scanner = new Scanner(System.in);
 
@@ -119,62 +292,18 @@ public class Misc {
     }
 
     /**
-     * Imprimi na tela do usuário o valor String definido em 'msg', e se caso houver
-     * formatação, quaisquer variavéis devem ser inseridos em 'args'.
-     * Uma cor pode ser definida escrevendo a cor desejada, mais informações sobre cores:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
+     * Imprime na tela do usuário o valor String definido em 'msg', e se caso houver
+     * formatação, quaisquer variáveis devem ser inseridas em 'args'.
      * 
      * @param msg  Texto em String.
-     * @param color Nome da cor, Ex: white
-     * @param args Variavéis separados por virgula caso haja formatação.
+     * @param args Variáveis separadas por vírgula caso haja formatação.
      */
-    public static void text(String msg, String color, Object... args) {
-        int codeColor = 97;
-
-        switch (color) {
-            case "black":
-                codeColor = 30;
-            case "red":
-                codeColor = 31;
-            case "green":
-                codeColor = 32;
-            case "yellow":
-                codeColor = 33;
-            case "blue":
-                codeColor = 34;
-            case "magenta":
-                codeColor = 35;
-            case "cyan":
-                codeColor = 36;
-            case "white":
-                codeColor = 37;
-            case "bright black":
-                codeColor = 90;
-            case "bright red":
-                codeColor = 91;
-            case "bright green":
-                codeColor = 92;
-            case "bright yellow":
-                codeColor = 93;
-            case "bright blue":
-                codeColor = 94;
-            case "bright mangeta":
-                codeColor = 95;
-            case "bright cyan":
-                codeColor = 96;
-            case "bright white":
-                codeColor = 97;
-            default:
-                codeColor = 97;
-                break;
-        }
-        
-        if (args == null) {
-            System.out.printf("\033[{0}m{1}\n", codeColor, msg);
+    public static void text(String msg, Object... args) {
+        if (args == null || args.length == 0) {
+            System.out.println(msg);
         } else {
-            System.out.printf("\\033[{0}m{1}\n",codeColor, msg, args);
+            System.out.printf(msg, args);
         }
-
     }
 
     /**
@@ -200,143 +329,6 @@ public class Misc {
             return scanner.nextBoolean();
         } else {
             return scanner.next();
-        }
-    }
-
-    /**
-     * Altera a cor do texto do console de acordo com a definição na entrada
-     * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
-     * 
-     * @param frontColor Nome da cor, Ex: white
-     */
-    public static void colorForeground(String frontColor) {
-        int codeColor = 0;
-
-        switch (frontColor) {
-            case "black":
-                codeColor = 30;
-            case "red":
-                codeColor = 31;
-            case "green":
-                codeColor = 32;
-            case "yellow":
-                codeColor = 33;
-            case "blue":
-                codeColor = 34;
-            case "magenta":
-                codeColor = 35;
-            case "cyan":
-                codeColor = 36;
-            case "white":
-                codeColor = 37;
-            case "bright black":
-                codeColor = 90;
-            case "bright red":
-                codeColor = 91;
-            case "bright green":
-                codeColor = 92;
-            case "bright yellow":
-                codeColor = 93;
-            case "bright blue":
-                codeColor = 94;
-            case "bright mangeta":
-                codeColor = 95;
-            case "bright cyan":
-                codeColor = 96;
-            case "bright white":
-                codeColor = 97;
-            default:
-                codeColor = 97;
-                break;
-        }
-
-        System.out.printf("\033[{0}m", codeColor);
-        clearScreen();
-    }
-
-    /**
-     * Altera a cor de fundo do console de acordo com a definição na entrada
-     * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
-     * 
-     * @param backColor Nome da cor, Ex: white
-     */
-    public static void colorBackground(String backColor) {
-        int codeColor = 0;
-
-        switch (backColor) {
-            case "black":
-                codeColor = 40;
-            case "red":
-                codeColor = 41;
-            case "green":
-                codeColor = 42;
-            case "yellow":
-                codeColor = 43;
-            case "blue":
-                codeColor = 44;
-            case "magenta":
-                codeColor = 45;
-            case "cyan":
-                codeColor = 46;
-            case "white":
-                codeColor = 47;
-            case "bright black":
-                codeColor = 100;
-            case "bright red":
-                codeColor = 101;
-            case "bright green":
-                codeColor = 102;
-            case "bright yellow":
-                codeColor = 103;
-            case "bright blue":
-                codeColor = 104;
-            case "bright mangeta":
-                codeColor = 105;
-            case "bright cyan":
-                codeColor = 106;
-            case "bright white":
-                codeColor = 107;
-            default:
-                codeColor = 40;
-                break;
-        }
-
-        System.out.printf("\033[{0}m", codeColor);
-        clearScreen();
-    }
-
-    /**
-     * Altera a cor de fundo do console de acordo com a definição na entrada
-     * 'color', para mais informações acesse:
-     * https://github.com/estape/Hotel-Manager-Pro/wiki/ANSI-Code-List
-     * 
-     * @param font Nome da fonte, Ex: bold
-     * @param underline Se o texto será sublinhado ou não.
-     */
-    public static void fontStyle(String font, Boolean underline) {
-        int codeFont = 0;
-
-        switch (font) {
-            case "normal":
-                codeFont = 22;
-            case "bold":
-                codeFont = 1;
-            case "green":
-                codeFont = 3;
-            default:
-                codeFont = 22;
-                break;
-        }
-
-        if (underline) {
-            System.out.printf("\033[{0};1m", codeFont);
-            clearScreen();
-        }
-        else{
-            System.out.printf("\033[{0}m", codeFont);
-        clearScreen();
         }
     }
 }

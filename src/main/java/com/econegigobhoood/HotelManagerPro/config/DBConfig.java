@@ -12,6 +12,8 @@ import java.io.FileReader; // Lê um arquivo, buscando seus bytes e decodificand
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import com.econegigobhoood.HotelManagerPro.model.Misc;
+
 public class DBConfig {
   private static final String URL = "jdbc:postgresql://localhost:5432/db_hotel_mgmt_sys";
   private static final String USER = "postgres";
@@ -42,9 +44,9 @@ public class DBConfig {
           stmt.execute(instrucao);
       }
     } catch (SQLException e) {
-      e.printStackTrace();
+      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exepção por final String.
     } catch (IOException e) {
-      e.printStackTrace();
+      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exepção por final String.
     }
   }
 }
