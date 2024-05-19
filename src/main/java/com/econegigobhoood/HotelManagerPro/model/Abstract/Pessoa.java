@@ -5,7 +5,9 @@ public abstract class Pessoa {
         
     }
 
-    public void deletarHospede(int id){
+    public void deletarPessoa(int id){
 
     }
+
+
 }

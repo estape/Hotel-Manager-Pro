@@ -1,53 +1,73 @@
 package com.econegigobhoood.HotelManagerPro.model.DTOs;
 
-public class DTOFuncionarios {
-    private String Nome;
-    private String Rg;
-    private int Idade;
-    private String Cargo;
+import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOFuncionarios;
+
+public class DTOFuncionarios extends DAOFuncionarios {
+    private int idFuncionario;
+    private String nome;
+    private String cargo; 
+    private String login;
+    private String senha;
+    
 
     public DTOFuncionarios(){
 
     }
 
-    public DTOFuncionarios(String Nome,String Rg, int Idade,String Cargo){
-      this.Nome = Nome;
-      this.Rg = Rg;
-      this.Idade = Idade;
-      this.Cargo = Cargo;
+    public DTOFuncionarios(int idFuncionario,String nome,String cargo,String login,String senha){
+      this.idFuncionario = idFuncionario;
+      this.nome = nome;
+      this.cargo = cargo;
+      this.login = login;
+      this.senha = senha;
+
+    }
+
+    public int getIdFuncionario() {
+        return idFuncionario;
+    }
+
+    public int setIdFuncionario(int idFuncionario) {
+        return this.idFuncionario = idFuncionario;
     }
 
     public String getNome() {
-        return Nome;
+        return nome;
     }
 
-    public void setNome(String nome) {
-        Nome = nome;
-    }
-
-    public String getRg() {
-        return Rg;
-    }
-
-    public void setRg(String rg) {
-        Rg = rg;
-    }
-
-    public int getIdade() {
-        return Idade;
-    }
-
-    public void setIdade(int idade) {
-        Idade = idade;
+    public String setNome(String nome) {
+        return this.nome = nome;
     }
 
     public String getCargo() {
-        return Cargo;
+        return cargo;
     }
 
-    public void setCargo(String cargo) {
-        Cargo = cargo;
+    public String setCargo(String cargo) {
+        return this.cargo = cargo;
     }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String setLogin(String login) {
+        return this.login = login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public String setSenha(String senha) {
+        return this.senha = senha;
+    }
+
+     @Override
+    public void incluirPessoa(){
+        this.insertarPessoa(this.getIdFuncionario(),this.getNome(),this.getCargo(),this.getLogin(),this.getSenha());
+    }
+
 
     
 }

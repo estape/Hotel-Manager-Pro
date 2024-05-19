@@ -60,7 +60,7 @@ public class DAOHospede extends Pessoa {
     }
     
     @Override
-    public void deletarHospede(int idHospede){
+    public void deletarPessoa(int idHospede){
         String query = "DELETE FROM Hospedes WHERE idHospede = ?";
         
         try {

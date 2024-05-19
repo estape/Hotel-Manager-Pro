@@ -80,13 +80,14 @@ public class DAOQuarto {
     }
     
 
-    public void alterarInfoQuarto(String infadd ){
+    public void alterarInfoQuarto(String infadd,int idQuarto ){
         String query = "UPDATE Quartos SET infadd = ? WHERE idQuarto = ?";
 
         try {
             DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setString(1, infadd);
+            stmt.setInt(2, idQuarto);
 
 
             stmt.executeUpdate();
