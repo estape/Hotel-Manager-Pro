@@ -1,11 +1,11 @@
-package com.econegigobhoood.HotelManagerPro.model.DTOs;
+package com.econegigobhoood.HotelManagerPro.model.entity;
 
 
 
-import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOHospede;
+import com.econegigobhoood.HotelManagerPro.model.dao.DAOHospede;
 
 
-public class DTOHospede extends DAOHospede {
+public class Hospede extends DAOHospede {
     private int idHospede;
     private String nome;
     private String cpf;
@@ -13,11 +13,11 @@ public class DTOHospede extends DAOHospede {
     
   
 
-    public DTOHospede(){
+    publicHospedee(){
 
     }
 
-    public DTOHospede(int idHospede,String nome, String cpf,String telefone){
+    publicHospedee(int idHospede,String nome, String cpf,String telefone){
       this.idHospede = idHospede;
       this.nome = nome;
       this.cpf = cpf;

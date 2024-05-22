@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.model.DAOs;
+package com.econegigobhoood.HotelManagerPro.model.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
-import com.econegigobhoood.HotelManagerPro.model.Abstract.Pessoa;
-import com.econegigobhoood.HotelManagerPro.model.DTOs.DTOHospede;
+import com.econegigobhoood.HotelManagerPro.model.abs.Pessoa;
+import com.econegigobhoood.HotelManagerPro.model.dto.DTOHospede;
 
 
 public class DAOHospede extends Pessoa {

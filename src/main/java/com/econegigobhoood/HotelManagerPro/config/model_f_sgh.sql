@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS funcionarios (
+CREATE TABLE IF NOT EXISTS funcionario (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     cargo VARCHAR(255) NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS funcionarios (
     senha VARCHAR(64) -- compatível com hashing SHA-256
 );
 
-CREATE TABLE IF NOT EXISTS hospedes (
+CREATE TABLE IF NOT EXISTS hospede (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     cpf VARCHAR(11) NOT NULL,
@@ -19,22 +19,17 @@ CREATE TABLE IF NOT EXISTS acompanhante (
     nome VARCHAR(255) NOT NULL,
     idade INT NOT NULL,
     cpf VARCHAR(11) NOT NULL,
-    id_hosp_fk INT REFERENCES hospedes(id)
-);
-
-CREATE TABLE IF NOT EXISTS status (
-    id SERIAL PRIMARY KEY,
-    tipo VARCHAR(255) NOT NULL
+    id_hosp_fk INT REFERENCES hosepede(id)
 );
 
 -- A FOREIGN KEYS não são unicas, pois a relação não é 1:1, é n:1
-CREATE TABLE IF NOT EXISTS reservas (
+CREATE TABLE IF NOT EXISTS reserva (
     id SERIAL PRIMARY KEY,
     valor_total NUMERIC NOT NULL,
     dt_reserva DATE NOT NULL,
-    id_func_fk INT REFERENCES funcionarios(id) NOT NULL, 
-    id_status_fk INT REFERENCES status(id) NOT NULL,
-    id_hosp_fk INT REFERENCES hospedes(id) NOT NULL
+    status VARCHAR(255) NOT NULL,
+    id_func_fk INT REFERENCES funcionario(id) NOT NULL, 
+    id_hosp_fk INT REFERENCES hosepede(id) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tipo_quarto (
@@ -44,7 +39,7 @@ CREATE TABLE IF NOT EXISTS tipo_quarto (
     valor NUMERIC NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS quartos (
+CREATE TABLE IF NOT EXISTS quarto (
     id SERIAL PRIMARY KEY,
     qtd_cama_solt INT NOT NULL,
     qtd_cama_cas INT NOT NULL,
@@ -53,10 +48,10 @@ CREATE TABLE IF NOT EXISTS quartos (
     id_tipoquar_fk INT REFERENCES tipo_quarto(id)
 );
 
-CREATE TABLE IF NOT EXISTS reserva_quartos (
+CREATE TABLE IF NOT EXISTS reserva_quarto (
     id SERIAL PRIMARY KEY,
     dt_entrada DATE NOT NULL,
     dt_saida DATE NOT NULL,
-    id_reserv_fk INT REFERENCES reservas(id) NOT NULL,
-    id_quarto_fk INT REFERENCES quartos(id) NOT NULL
+    id_reserv_fk INT REFERENCES reserva(id) NOT NULL,
+    id_quarto_fk INT REFERENCES quarto(id) NOT NULL
 );

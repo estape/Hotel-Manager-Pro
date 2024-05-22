@@ -1,8 +1,8 @@
-package com.econegigobhoood.HotelManagerPro.model.DTOs;
+package com.econegigobhoood.HotelManagerPro.model.entity;
 
-import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOQuarto;
+import com.econegigobhoood.HotelManagerPro.model.dao.DAOQuarto;
 
-public class DTOQuarto extends DAOQuarto {
+public class Quarto extends DAOQuarto {
     
     private int idQuarto;
     private int qtdCamaSolt;
@@ -12,11 +12,11 @@ public class DTOQuarto extends DAOQuarto {
     private int idtpQuarto;
     
 
-    public DTOQuarto(String Nome,String Rg, int Idade){
+    public Quarto(String Nome,String Rg, int Idade){
         
     }
 
-    public DTOQuarto(int idQuarto,int qtdCamaSolt,int qtdCamacas, int qtdbanheiro,String infadd,int idtpQuarto){
+    public Quarto(int idQuarto,int qtdCamaSolt,int qtdCamacas, int qtdbanheiro,String infadd,int idtpQuarto){
         this.idQuarto    = idQuarto;
         this.qtdCamaSolt = qtdCamaSolt;
         this.qtdCamacas  = qtdCamacas;
