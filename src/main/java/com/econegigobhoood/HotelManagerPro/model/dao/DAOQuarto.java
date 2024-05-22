@@ -1,4 +1,4 @@
-package com.econegigobhoood.HotelManagerPro.model.DAOs;
+package com.econegigobhoood.HotelManagerPro.model.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
-import com.econegigobhoood.HotelManagerPro.model.DTOs.DTOQuarto;
+import com.econegigobhoood.HotelManagerPro.model.entity.Quarto;
 
 
 public class DAOQuarto {
     private Connection conexion;
-     public List<DTOQuarto> listaQuartos() {
+     public List<Quarto> listaQuartos() {
         
-        List<DTOQuarto> cliente = new ArrayList<DTOQuarto>();
+        List<Quarto> cliente = new ArrayList<Quarto>();
         String query = "SELECT * FROM Quartos";
 
         try {
@@ -31,9 +31,9 @@ public class DAOQuarto {
                 int idtpQuarto  = rs.getInt("idtpQuarto");
             
 
-                DTOQuarto DTOQuarto = new DTOQuarto (idQuarto, qtdCamaSolt, qtdCamacas,  qtdbanheiro, infadd,idtpQuarto);
+                Quarto Quarto = new Quarto (idQuarto, qtdCamaSolt, qtdCamacas,  qtdbanheiro, infadd,idtpQuarto);
 
-                cliente.add (DTOQuarto);
+                cliente.add (Quarto);
             }
 
             return cliente;
@@ -96,7 +96,7 @@ public class DAOQuarto {
         } 
     }
 
-    public DTOQuarto selecionarQuarto(int id){
+    public Quarto selecionarQuarto(int id){
         String query = "SELECT * FROM Quartos WHERE idQuarto = ?";
         
         try {
@@ -115,9 +115,9 @@ public class DAOQuarto {
                 int idtpQuarto  = rs.getInt("idtpQuarto");
                
 
-                DTOQuarto DTOQuarto = new DTOQuarto (idQuarto, qtdCamaSolt, qtdCamacas,  qtdbanheiro, infadd,idtpQuarto);
+                Quarto Quarto = new Quarto (idQuarto, qtdCamaSolt, qtdCamacas,  qtdbanheiro, infadd,idtpQuarto);
 
-                return DTOQuarto;
+                return Quarto;
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,14 +8,14 @@ import java.util.List;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
 import com.econegigobhoood.HotelManagerPro.model.abs.Pessoa;
-import com.econegigobhoood.HotelManagerPro.model.dto.DTOHospede;
+import com.econegigobhoood.HotelManagerPro.model.entity.Hospede;
 
 
 public class DAOHospede extends Pessoa {
     private Connection conexion;
-     public List<DTOHospede> listaHospedes() {
+     public List<Hospede> listaHospedes() {
         
-        List<DTOHospede> cliente = new ArrayList<DTOHospede>();
+        List<Hospede> cliente = new ArrayList<Hospede>();
         String query = "SELECT * FROM Hospedes";
 
         try {
@@ -30,9 +30,9 @@ public class DAOHospede extends Pessoa {
                 int    idHospede = rs.getInt("idHospede"); 
             
 
-                DTOHospede DTOHospede = new DTOHospede (idHospede, nome, cpf,  telefone);
+                Hospede Hospede = new Hospede (idHospede, nome, cpf,  telefone);
 
-                cliente.add (DTOHospede);
+                cliente.add (Hospede);
             }
 
             return cliente;
@@ -90,7 +90,7 @@ public class DAOHospede extends Pessoa {
         } 
     }*/ //Falar com Rodrigo e Ronan se de fato isso deve existir
 
-    public DTOHospede selecionarHospede(int id){
+    public Hospede selecionarHospede(int id){
         String query = "SELECT * FROM Hospedes WHERE idHospede = ?";
         
         try {
@@ -107,9 +107,9 @@ public class DAOHospede extends Pessoa {
                 int    idHospede = rs.getInt("idHospede"); 
                
 
-                DTOHospede DTOHospede = new DTOHospede (idHospede, nome, cpf,  telefone);
+                Hospede Hospede = new Hospede (idHospede, nome, cpf,  telefone);
 
-                return DTOHospede;
+                return Hospede;
             }
         } catch (Exception e) {
             e.printStackTrace();
