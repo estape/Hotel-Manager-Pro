@@ -84,8 +84,7 @@ public class newUser {
 
             switch (confirm) {
                 case "S":
-                    // Conectar ao banco de dados, após concluir será dado a seguencia de voltar ao
-                    // menu inicial
+                    // Conectar ao banco de dados, após concluir será dado a seguencia de voltar ao menu inicial
                     Misc.clearScreen();
                     nome = "";
                     cpf = 0;
