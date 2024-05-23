@@ -84,14 +84,20 @@ public class newUser {
 
             switch (confirm) {
                 case "S":
-                    // Conectar ao banco de dados, após concluir será dado a seguencia de voltar ao menu inicial
+                    // Conectar ao banco de dados, após concluir será dado a seguencia de voltar ao
+                    // menu inicial
+                    Misc.clearScreen();
+                    nome = "";
+                    cpf = 0;
+                    cargo = "";
+                    opCargo = 0;
                     MainMenu.callMainMenu();
                     break;
                 case "N":
                     Misc.clearScreen();
                     newUserMenu();
                     break;
-            
+
                 default:
                     Misc.text("Opção inválida. Tente novamente.");
                     break;
