@@ -18,7 +18,7 @@ public class DAOFuncionarios extends Pessoa {
         String query = "SELECT * FROM Funcionarios";
 
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             
             ResultSet rs = stmt.executeQuery();
@@ -42,16 +42,16 @@ public class DAOFuncionarios extends Pessoa {
         return null;
     }
     
-    public void insertarPessoa(int idFuncionario, String nome, String cargo, String login, String senha) {
+    public void insertarPessoa(DTOFuncionarios entidade) {
         try {
-            DBConfig.getConnection();
-            String consulta = "INSERT INTO Funcionarios (idFuncionario, nome, cargo, login, senha) VALUES (?, ?, ?, ?)";
+            conexion = DBConfig.getConnection();
+            String consulta = "INSERT INTO Funcionarios (idFuncionario, nome, cargo, login, senha) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1,idFuncionario);
-            statement.setString(2,nome);
-            statement.setString(3,cargo) ;
-            statement.setString(4,login);
-            statement.setString(5,senha);
+            statement.setInt(1,entidade.getIdFuncionario());
+            statement.setString(2,entidade.getNome());
+            statement.setString(3,entidade.getCargo()) ;
+            statement.setString(4,entidade.getLogin());
+            statement.setString(5,entidade.getSenha());
 
             statement.executeUpdate();
             

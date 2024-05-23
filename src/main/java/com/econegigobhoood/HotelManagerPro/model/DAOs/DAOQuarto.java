@@ -18,7 +18,7 @@ public class DAOQuarto {
         String query = "SELECT * FROM Quartos";
 
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             
             ResultSet rs = stmt.executeQuery();
@@ -46,17 +46,17 @@ public class DAOQuarto {
     }
 
 
-    public void insertarQuarto(int idQuarto,int qtdCamaSolt, int qtdCamacas,int qtdbanheiro,String infadd,int idtpQuarto) {
+    public void insertarQuarto(DTOQuarto entidade) {
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             String consulta = "INSERT INTO Quartos (idQuarto, qtdCamaSolt, qtdCamacas, qtdbanheiro,infadd,idtpQuarto) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1,idQuarto);
-            statement.setInt(2,qtdCamaSolt);
-            statement.setInt(3,qtdCamacas) ;
-            statement.setInt(4,qtdbanheiro);
-            statement.setString(5,infadd);     
-            statement.setInt(6,idtpQuarto);
+            statement.setInt(1,entidade.getIdQuarto());
+            statement.setInt(2,entidade.getQtdCamaSolt());
+            statement.setInt(3,entidade.getQtdCamacas()) ;
+            statement.setInt(4,entidade.getQtdbanheiro());
+            statement.setString(5,entidade.getInfadd());     
+            statement.setInt(6,entidade.getIdtpQuarto());
 
             statement.executeUpdate();
             
@@ -69,7 +69,7 @@ public class DAOQuarto {
         String query = "DELETE FROM Quartos WHERE idQuarto = ?";
         
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setInt(1, idQuarto);
 
@@ -84,7 +84,7 @@ public class DAOQuarto {
         String query = "UPDATE Quartos SET infadd = ? WHERE idQuarto = ?";
 
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setString(1, infadd);
             stmt.setInt(2, idQuarto);
@@ -100,7 +100,7 @@ public class DAOQuarto {
         String query = "SELECT * FROM Quartos WHERE idQuarto = ?";
         
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setInt(1, id);
 

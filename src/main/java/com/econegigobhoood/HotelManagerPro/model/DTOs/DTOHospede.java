@@ -1,11 +1,6 @@
 package com.econegigobhoood.HotelManagerPro.model.DTOs;
 
-
-
-import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOHospede;
-
-
-public class DTOHospede extends DAOHospede {
+public class DTOHospede {
     private int idHospede;
     private String nome;
     private String cpf;
@@ -13,8 +8,10 @@ public class DTOHospede extends DAOHospede {
     
   
 
-    public DTOHospede(){
-
+    public DTOHospede(String nome, String cpf,String telefone){
+        this.nome = nome;
+        this.cpf = cpf;
+        this.telefone = telefone;
     }
 
     public DTOHospede(int idHospede,String nome, String cpf,String telefone){
@@ -57,10 +54,4 @@ public class DTOHospede extends DAOHospede {
         return this.telefone = telefone;
     }
 
-   @Override
-    public void incluirPessoa(){
-        this.insertarPessoa(this.getIdHospede(),this.getNome(),this.getCpf(),this.getTelefone());
-    }
-
-    
 }

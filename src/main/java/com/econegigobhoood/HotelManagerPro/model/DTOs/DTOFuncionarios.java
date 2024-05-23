@@ -1,8 +1,8 @@
 package com.econegigobhoood.HotelManagerPro.model.DTOs;
 
-import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOFuncionarios;
 
-public class DTOFuncionarios extends DAOFuncionarios {
+
+public class DTOFuncionarios {
     private int idFuncionario;
     private String nome;
     private String cargo; 
@@ -63,10 +63,7 @@ public class DTOFuncionarios extends DAOFuncionarios {
         return this.senha = senha;
     }
 
-     @Override
-    public void incluirPessoa(){
-        this.insertarPessoa(this.getIdFuncionario(),this.getNome(),this.getCargo(),this.getLogin(),this.getSenha());
-    }
+
 
 
     

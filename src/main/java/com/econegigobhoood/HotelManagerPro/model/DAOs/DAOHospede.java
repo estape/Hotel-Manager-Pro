@@ -12,14 +12,14 @@ import com.econegigobhoood.HotelManagerPro.model.DTOs.DTOHospede;
 
 
 public class DAOHospede extends Pessoa {
-    private Connection conexion;
+    private  Connection conexion;
      public List<DTOHospede> listaHospedes() {
         
         List<DTOHospede> cliente = new ArrayList<DTOHospede>();
         String query = "SELECT * FROM Hospedes";
 
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             
             ResultSet rs = stmt.executeQuery();
@@ -27,7 +27,7 @@ public class DAOHospede extends Pessoa {
                 String telefone  = rs.getString("telefone");
                 String cpf       = rs.getString("cpf");
                 String nome      = rs.getString("nome");
-                int    idHospede = rs.getInt("idHospede"); 
+                int    idHospede = rs.getInt("idhospede"); 
             
 
                 DTOHospede DTOHospede = new DTOHospede (idHospede, nome, cpf,  telefone);
@@ -42,15 +42,15 @@ public class DAOHospede extends Pessoa {
         return null;
     }
     
-    public void insertarPessoa(int idHospede, String nome, String cpf, String telefone) {
+    public void insertarPessoa(DTOHospede entidade) {
+        System.err.println("Aqui");
         try {
-            DBConfig.getConnection();
-            String consulta = "INSERT INTO Hospedes (idHospede, nome, cpf, telefone) VALUES (?, ?, ?, ?)";
+            conexion = DBConfig.getConnection();
+            String consulta = "INSERT INTO Hospedes (nome, cpf, telefone) VALUES (?, ?, ?)";
             PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1,idHospede);
-            statement.setString(2,nome);
-            statement.setString(3,cpf) ;
-            statement.setString(4,telefone);
+            statement.setString(1,entidade.getNome());
+            statement.setString(2,entidade.getCpf()) ;
+            statement.setString(3,entidade.getTelefone());
 
             statement.executeUpdate();
             
@@ -64,7 +64,7 @@ public class DAOHospede extends Pessoa {
         String query = "DELETE FROM Hospedes WHERE idHospede = ?";
         
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setInt(1, idHospede);
 
@@ -94,7 +94,7 @@ public class DAOHospede extends Pessoa {
         String query = "SELECT * FROM Hospedes WHERE idHospede = ?";
         
         try {
-            DBConfig.getConnection();
+            conexion = DBConfig.getConnection();
             PreparedStatement stmt = conexion.prepareStatement(query);
             stmt.setInt(1, id);
 

@@ -1,8 +1,8 @@
 package com.econegigobhoood.HotelManagerPro.model.DTOs;
 
-import com.econegigobhoood.HotelManagerPro.model.DAOs.DAOQuarto;
 
-public class DTOQuarto extends DAOQuarto {
+
+public class DTOQuarto  {
     
     private int idQuarto;
     private int qtdCamaSolt;
@@ -73,7 +73,4 @@ public class DTOQuarto extends DAOQuarto {
         return this.idtpQuarto = idtpQuarto;
     }
 
-    public void incluirQuarto(){
-        this.insertarQuarto(this.getIdQuarto(),this.getQtdCamaSolt(),this.getQtdCamacas(),this.getQtdbanheiro(),this.getInfadd(),getIdtpQuarto());
-    }
 }
