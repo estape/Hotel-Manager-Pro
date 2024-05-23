@@ -44,9 +44,9 @@ public class DBConfig {
           stmt.execute(instrucao);
       }
     } catch (SQLException e) {
-      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exepção por final String.
+      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exceção por final String.
     } catch (IOException e) {
-      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exepção por final String.
+      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exceção por final String.
     }
   }
 }

@@ -201,7 +201,6 @@ public class MainMenu {
         switch (op) {
             case "1":
                 Misc.clearScreen();
-
                 break;
             case "2":
                 Misc.clearScreen();
