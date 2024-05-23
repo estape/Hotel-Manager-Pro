@@ -1,66 +1,29 @@
 package com.econegigobhoood.HotelManagerPro.model.entity;
 
-
-
-import com.econegigobhoood.HotelManagerPro.model.dao.DAOHospede;
-
-
-public class Hospede extends DAOHospede {
-    private int idHospede;
-    private String nome;
-    private String cpf;
+import com.econegigobhoood.HotelManagerPro.model.abs.Pessoa;
+public class Hospede extends Pessoa {
     private String telefone;
-    
-  
 
-    publicHospedee(){
-
+    // Construtor sem ID
+    public Hospede(String nome, String cpf, String telefone) {
+        super.setNome(nome);
+        super.setCpf(cpf);
+        this.telefone = telefone;
     }
 
-    publicHospedee(int idHospede,String nome, String cpf,String telefone){
-      this.idHospede = idHospede;
-      this.nome = nome;
-      this.cpf = cpf;
-      this.telefone = telefone;
-    }
-
-    public int getIdHospede() {
-        return idHospede;
-    }
-
-    public int setIdHospede(int idHospede) {
-        return this.idHospede = idHospede;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String setNome(String nome) {
-        return this.nome = nome;
-    }
-     
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public String setCpf(String cpf) {
-        return this.cpf = cpf;
+    // Construtor com ID, para informação em BD
+    public Hospede(int id, String nome, String cpf, String telefone) {
+        super.setId(id);
+        super.setNome(nome);
+        super.setCpf(cpf);
+        this.telefone = telefone;
     }
 
     public String getTelefone() {
         return telefone;
     }
 
-    public String setTelefone(String telefone) {
-        return this.telefone = telefone;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
-
-   @Override
-    public void incluirPessoa(){
-        this.insertarPessoa(this.getIdHospede(),this.getNome(),this.getCpf(),this.getTelefone());
-    }
-
-    
 }

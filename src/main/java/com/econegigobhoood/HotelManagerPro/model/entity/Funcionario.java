@@ -13,8 +13,7 @@ public class Funcionario extends Pessoa {
     }
 
     // Construtor com ID, para informação em BD
-    public Funcionario(int id, String nome, String cpf, 
-            String cargo) {
+    public Funcionario(int id, String nome, String cpf, String cargo) {
         super.setId(id);
         super.setNome(nome);
         super.setCpf(cpf);

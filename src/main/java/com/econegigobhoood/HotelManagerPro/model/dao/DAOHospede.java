@@ -1,119 +1,110 @@
 package com.econegigobhoood.HotelManagerPro.model.dao;
 
+
+import com.econegigobhoood.HotelManagerPro.config.DBConfig;
+import com.econegigobhoood.HotelManagerPro.model.entity.Hospede;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.econegigobhoood.HotelManagerPro.config.DBConfig;
-import com.econegigobhoood.HotelManagerPro.model.abs.Pessoa;
-import com.econegigobhoood.HotelManagerPro.model.entity.Hospede;
+public class DAOHospede implements IDAO<Hospede> {
 
-
-public class DAOHospede extends Pessoa {
-    private Connection conexion;
-     public List<Hospede> listaHospedes() {
-        
-        List<Hospede> cliente = new ArrayList<Hospede>();
-        String query = "SELECT * FROM Hospedes";
-
-        try {
-            DBConfig.getConnection();
-            PreparedStatement stmt = conexion.prepareStatement(query);
-            
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                String telefone  = rs.getString("telefone");
-                String cpf       = rs.getString("cpf");
-                String nome      = rs.getString("nome");
-                int    idHospede = rs.getInt("idHospede"); 
-            
-
-                Hospede Hospede = new Hospede (idHospede, nome, cpf,  telefone);
-
-                cliente.add (Hospede);
-            }
-
-            return cliente;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-        return null;
-    }
-    
-    public void insertarPessoa(int idHospede, String nome, String cpf, String telefone) {
-        try {
-            DBConfig.getConnection();
-            String consulta = "INSERT INTO Hospedes (idHospede, nome, cpf, telefone) VALUES (?, ?, ?, ?)";
-            PreparedStatement statement = conexion.prepareStatement(consulta);
-            statement.setInt(1,idHospede);
-            statement.setString(2,nome);
-            statement.setString(3,cpf) ;
-            statement.setString(4,telefone);
-
-            statement.executeUpdate();
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-    }
-    
     @Override
-    public void deletarPessoa(int idHospede){
-        String query = "DELETE FROM Hospedes WHERE idHospede = ?";
-        
-        try {
-            DBConfig.getConnection();
-            PreparedStatement stmt = conexion.prepareStatement(query);
-            stmt.setInt(1, idHospede);
-
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
+    public String getNomeClasse() {
+        return Hospede.class.getSimpleName();
     }
-    
 
-    /*public void alterarInfoHospede(String infadd ){
-        String query = "UPDATE Hospd SET infadd = ? WHERE idQuarto = ?";
+    @Override
+    public PreparedStatement dbConnect(String sql) throws SQLException {
+        Connection connection = DBConfig.getCon();
+        return connection.prepareStatement(sql);
+    }
 
-        try {
-            DBConfig.getConnection();
-            PreparedStatement stmt = conexion.prepareStatement(query);
-            stmt.setString(1, infadd);
-
+    @Override
+    public void cadastrar(Hospede entidade) {
+        String sql = "INSERT INTO hospede (nome, cpf, telefone) VALUES(?, ?, ?)";
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setString(1, entidade.getNome());
+            stmt.setString(2, entidade.getCpf());
+            stmt.setString(3, entidade.getTelefone());
 
             stmt.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-        } 
-    }*/ //Falar com Rodrigo e Ronan se de fato isso deve existir
+        }
+    }
 
-    public Hospede selecionarHospede(int id){
-        String query = "SELECT * FROM Hospedes WHERE idHospede = ?";
-        
-        try {
-            DBConfig.getConnection();
-            PreparedStatement stmt = conexion.prepareStatement(query);
+    @Override
+    public void atualizar(Hospede entidade) {
+        String sql = "UPDATE hospede SET nome = ?, cpf = ?, telefone = ? WHERE id = ?";
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setString(1, entidade.getNome());
+            stmt.setString(2, entidade.getCpf());
+            stmt.setString(3, entidade.getTelefone());
+            stmt.setInt(4, entidade.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void excluir(int id) {
+        String sql = "DELETE FROM hospede WHERE id = ?";
+        try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
 
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String telefone  = rs.getString("telefone");
-                String cpf       = rs.getString("cpf");
-                String nome      = rs.getString("nome");
-                int    idHospede = rs.getInt("idHospede"); 
-               
-
-                Hospede Hospede = new Hospede (idHospede, nome, cpf,  telefone);
-
-                return Hospede;
-            }
-        } catch (Exception e) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
             e.printStackTrace();
-        } 
+        }
+    }
+
+    @Override
+    public Hospede buscar(int id) {
+        String sql = "SELECT * FROM hospede WHERE id = ?";
+
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                String nome = rs.getString("nome");
+                String cpf = rs.getString("cpf");
+                String telefone = rs.getString("telefone");
+                Hospede entidade = new Hospede(id, nome, cpf, telefone);
+
+                return entidade;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Hospede> listar() {
+        List<Hospede> entidades = new ArrayList<Hospede>();
+        String sql = "SELECT * FROM hospede";
+
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()) {
+                String nome = rs.getString("nome");
+                String cpf = rs.getString("cpf");
+                String telefone = rs.getString("telefone");
+                int id = rs.getInt("id");
+                Hospede entidade = new Hospede(id, nome, cpf, telefone);
+                entidades.add(entidade);
+            }
+            return entidades;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
