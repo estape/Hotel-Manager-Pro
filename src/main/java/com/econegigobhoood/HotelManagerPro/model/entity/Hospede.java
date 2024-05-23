@@ -6,16 +6,13 @@ public class Hospede extends Pessoa {
 
     // Construtor sem ID
     public Hospede(String nome, String cpf, String telefone) {
-        super.setNome(nome);
-        super.setCpf(cpf);
+        super(nome, cpf);
         this.telefone = telefone;
     }
 
     // Construtor com ID, para informação em BD
     public Hospede(int id, String nome, String cpf, String telefone) {
-        super.setId(id);
-        super.setNome(nome);
-        super.setCpf(cpf);
+        super(id, nome, cpf);
         this.telefone = telefone;
     }
 

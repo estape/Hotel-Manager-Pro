@@ -35,17 +35,8 @@ CREATE TABLE IF NOT EXISTS carac_quarto (
 -- >>>>=====================<<<<
 -- >>> tabelas independentes <<<
 -- >>>>=====================<<<<
--- A FOREIGN KEYS deve ser NOT NULL, pois hospede é (1,1)
-CREATE TABLE IF NOT EXISTS acompanhante (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
-    idade INT NOT NULL,
-    id_hosp_fk INT REFERENCES hospede(id) NOT NULL
-);
-
- -- A FOREIGN KEYS deve ser NOT NULL, pois hospede é (1,1) e
- -- funcionario também é (1,1)
+-- A FOREIGN KEYS deve ser NOT NULL, pois hospede é (1,1) e
+-- funcionario também é (1,1)
 CREATE TABLE IF NOT EXISTS pedido (
     id SERIAL PRIMARY KEY,
     dt_pedido DATE NOT NULL,
@@ -73,6 +64,15 @@ CREATE TABLE IF NOT EXISTS reserva (
     res_status VARCHAR(255) NOT NULL,
     id_pedido_fk INT REFERENCES pedido(id) NOT NULL, 
     num_quarto_fk INT REFERENCES quarto(num) NOT NULL
+);
+
+-- A FOREIGN KEYS deve ser NOT NULL, pois hospede é (1,1)
+CREATE TABLE IF NOT EXISTS acompanhante (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
+    idade INT NOT NULL,
+    id_reserva_fk INT REFERENCES reserva(id) NOT NULL
 );
 
 -- >>>>=======================<<<<

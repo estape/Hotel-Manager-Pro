@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
-import com.econegigobhoood.HotelManagerPro.controller.CONPessoa;
+import com.econegigobhoood.HotelManagerPro.controller.Controller;
 import com.econegigobhoood.HotelManagerPro.model.Misc;
 import com.econegigobhoood.HotelManagerPro.view.MainMenu;
 import com.econegigobhoood.HotelManagerPro.model.dao.*;
@@ -22,20 +22,20 @@ public class HotelManagerProApplication {
 		// Misc.colorBackground("blue"); 
 
 		// Inicializando as dependências
-		// PessoaView se necessario
 		DAOFuncionario daoFunc = new DAOFuncionario();
-		CONPessoa<Funcionario> conFunc = new CONPessoa<>(daoFunc);
+		Controller<Funcionario> conFunc = new Controller<>(daoFunc);
 		
 		DAOHospede daoHosp = new DAOHospede();
-		CONPessoa<Hospede> conHosp = new CONPessoa<>(daoHosp);
+		Controller<Hospede> conHosp = new Controller<>(daoHosp);
+
+		DAOTipoQuarto daoTipoQua = new DAOTipoQuarto();
+		Controller<TipoQuarto> conTipoQua = new Controller<>(daoTipoQua);
 
 		// Inicializando o banco de dados
 		DBConfig.createTables();
 
 		// Inicializando o menu principal
 		// MainMenu.callMainMenu();
-
-
 
 		/***********************************************
 		 *** AREA DE TESTE (Pode apagar tudo depois) ***
@@ -79,5 +79,25 @@ public class HotelManagerProApplication {
         // for (Hospede hospede : listaTesteBusca) {
         //     System.out.println("ID: " + hospede.getId() + ", Nome: " + hospede.getNome());
         // };
+
+		// TESTE HOSPEDE
+		TipoQuarto tipoQ = new TipoQuarto("Casal", "Quarto recomendado para um casal", 120);
+		TipoQuarto tipoQBD = new TipoQuarto(1, "Casal Deluxe", "Quarto recomendado para um casal, maior tamanho e itens de luxo", 120);
+
+		// CADASTRA
+		// System.out.println(conTipoQua.cadastrar(tipoQ)); // Executa e printa
+		// ATUALIZA
+		// System.out.println(conTipoQua.atualizar(tipoQBD)); // Executa e printa
+		// EXCLUI
+		// System.out.println(conTipoQua.excluir(1)); // Executa e printa
+		// BUSCA
+		// TipoQuarto testeBusca = conTipoQua.buscar(1); // Executa
+		// System.out.println(testeBusca.getNome()); // Printa
+		// LISTA
+		// List<TipoQuarto> listaTesteBusca = conTipoQua.listar(); // Executa
+		// System.out.println("Lista de TipoQuarto: ");
+		// for (TipoQuarto hospede : listaTesteBusca) {
+		//     System.out.println("ID: " + hospede.getId() + ", Nome: " + hospede.getNome());
+		// };
 	}
 }
