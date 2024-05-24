@@ -1,5 +1,7 @@
 package com.econegigobhoood.HotelManagerPro.view;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,97 +11,247 @@ import com.econegigobhoood.HotelManagerPro.model.entity.*;
 
 public class View {
     private Scanner scanner;
+    private Funcionario funcionario;
     private ControlPessoa<Funcionario> conFunc;
     private ControlPessoa<Hospede> conHosp;
     private Controller<TipoQuarto> conTipoQua;
+    private Controller<Pedido> conPedido;
 
     // Construtor
     public View(Scanner scanner, ControlPessoa<Funcionario> conFunc,
-                ControlPessoa<Hospede> conHosp, Controller<TipoQuarto> conTipoQua) {
+            ControlPessoa<Hospede> conHosp, Controller<TipoQuarto> conTipoQua,
+            Controller<Pedido> conPedido) {
         this.scanner = scanner;
         this.conFunc = conFunc;
         this.conHosp = conHosp;
         this.conTipoQua = conTipoQua;
+        this.conPedido = conPedido;
     }
 
     // Métodos
-    public void iniciar () {
-        acesso();
-        // >>> MOSTRA MENU
-
-        // SELECIONA > Fazer pedido
-        /*
-        * data = now()
-        * PRINT(Qual cliente? (CPF))
-        * cpf = cpf
-        * buscaHospede(cpf) existe ? 
-        * - SIM> Hospede hospede = buscaHospede(cpf)
-        * - NAO> PRINT(hospede n encontrado, cadastra?)
-        * -- SIM> pergunta todos os valores, menos o CPF pois já foi lançado
-        * --- cadastraHospede(valores, valores, cpf)
-        * --- Hospede hospede = buscaHospede(cpf)
-        * -- NAO> Volta menu
-        * 
-        * Pedido pedido = new Pedido(data, hospede, funcionario)
-        * Lista<Reserva> reservas = new List<>
-        * 
-        * PRINT(RESERVA:)
-        * private LocalDate getLocalDate(String titulo) {
-        *      PRINT(Qual a data de entrada:)
-        *      PRINT([titulo] dia: )
-        *      dia = dia
-        *      PRINT([titulo] mes (numeral): )
-        *      mes = mes
-        *      PRINT([titulo] ano (4 numerais): )
-        *      ano = ano
-        *      LocalDate dtEntrada = LocalDate.of(ano, mes, dia)
-        * }
-        * 
-        * LocalDate dtEntrada = getLocalDate("Entrada");
-        * LocalDate dtSaida = getLocalDate("Saida");
-        * 
-        * MOSTRAQUARTOSDISPONIVEIS() consulta data entre reservas feitas
-        * 
-        * // Buscado idPedido aqui, ao invés de lá em cima e deixar mais enxuto o codigo, para reduzir a chance de criar pedido vazio (sem reserva cadastrada)
-        * idPedido = cadastraPedido(pedido)
-        * Reserva reserva = new Reserva (dtEntrada, dtSaida, idPedido, quarto)
-        * 
-        * String resp = "s"
-        * while (resp.equals("s")) {
-        *      PRINT(NOVA RESERVA:)
-        *      LocalDate dtEntrada = getLocalDate("Entrada");
-        *      LocalDate dtSaida = getLocalDate("Saida");
-        *      Reserva reserva = new Reserva (dtEntrada, dtSaida, idPedido, quarto);
-        * 
-        *      MOSTRAQUARTOSDISPONIVEIS() consulta data entre reservas feitas
-        * 
-        *      reservas.add(reserva)
-        *      PRINT("Quer fazer outra reserva?")
-        * }
-        * 
-        * ACOMPANHANTE FICA EM PEDIDOS
-        * 
-        */
+    public void iniciar() {
+        funcionario = acesso();
+        mainMenu();
     }
 
-    
-    private void acesso() {
+    private void mainMenu() {
+        cadastrarPedido(funcionario);
+    }
+
+    private void cadastrarPedido(Funcionario funcionario) {
+        System.out.println("================================");
+        System.out.println("         SESSÃO PEDIDO          ");
+        System.out.println("================================");
+        LocalDate hoje = LocalDate.now();
+        Hospede hospede = buscarHospedeCPF();
+
+        if (hospede == null) {
+            mainMenu();
+            return; // Saia do método cadastrarPedido
+        }
+
+        // TODO: Futuro
+        /*
+         * Caso protótipo aprovado, tratar pedido vazio/incompleto por interrupção:
+         * - Possivel resolução: dar rollback caso não finalizar o processo de reserva
+         */
+        Pedido pedido = new Pedido(hoje, hospede, funcionario);
+        int idPedido = conPedido.cadastrar(pedido);
+        List<Reserva> reservas = new ArrayList<Reserva>();
+        
+        String opcao = "s";
+        while (opcao.equals("s")) {
+            Reserva reserva = cadastrarReserva(idPedido);
+            reservas.add(reserva);
+            System.out.println("Gostaria de fazer outra reserva? (s/n) ");
+            opcao = scanner.nextLine();
+        }
+
+        System.out.println("Resumo do pedido: ");
+        mostrarDetalhesPedido(pedido);
+
+        System.out.println("Seu pedido está correto? (s/n) ");
+        opcao = scanner.nextLine();
+        if (opcao.equals("s")) {
+            pedido.setReservas(reservas);
+            conPedido.atualizar(pedido);
+            System.out.println("Cadastro do Pedido finalizado com sucesso!");
+            mainMenu();
+            return; // Sai do método cadastrarPedido
+        } else {
+            conPedido.excluir(idPedido);
+            System.out.println("Pedido retirado do Banco!");
+            System.out.println("Operação cancelada!");
+            mainMenu();
+            return; // Sai do método cadastrarPedido
+        }
+    }
+
+    private Hospede buscarHospedeCPF() {
+        System.out.println("Digite o CPF do Hospede: ");
+        String cpf = scanner.nextLine();
+        Hospede hospede = conHosp.buscarCpf(cpf);
+
+        while (hospede == null) {
+            System.out.println("Hospede não encontrado!\nGostaria de:");
+            System.out.println("1 - Cadastrar Hospede");
+            System.out.println("2 - Inserir CPF novamente");
+            System.out.println("3 - Cancelar operação");
+            int opcao = scanner.nextInt();
+            scanner.nextLine(); // limpa buffer
+
+            switch(opcao) {
+                case 1 -> hospede = cadastraHospede();
+                case 2 -> {
+                    System.out.println("Digite o CPF do Hospede:");
+                    cpf = scanner.nextLine();
+                    hospede = conHosp.buscarCpf(cpf);
+                }
+                case 3 -> { 
+                    System.out.println("Operação cancelada!");
+                    return null;
+                }
+                default -> System.out.println("Opção invalida.");
+            }
+        }
+
+        return hospede;
+    }
+
+    private Reserva cadastrarReserva(int idPedido) {
+        System.out.println("================================");
+        System.out.println("            RESERVA             ");
+        System.out.println("================================");
+        LocalDate dtEntrada = _getLocalDate("Entrada");
+        LocalDate dtSaida = _getLocalDate("Saida");
+        Quarto quarto = mostraQuartosDisponiveis();
+        Pedido pedido = conPedido.buscar(idPedido);
+        Reserva reserva = new Reserva (dtEntrada, dtSaida, pedido, quarto);
+
+        return reserva;
+    }
+
+    private void buscarPedido () {
+        System.out.println("Digite o ID do pedido a ser buscado: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // coleta buffer
+        Pedido pedido = conPedido.buscar(id);
+        if (pedido != null) {
+            mostrarDetalhesPedido(pedido);
+        } else {
+            System.out.println("Pedido não encontrado!");
+        }
+    }
+
+    private void atualizarPedido() {
+        System.out.println("Atualização de Hospede e Funcionario. ");
+        System.out.println("Digite o ID do pedido a ser atualizado: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // coleta buffer
+        Pedido pedido = conPedido.buscar(id);
+
+        if (pedido != null) {
+            System.out.println("Corrigindo Funcionario");
+            Funcionario funcionario = buscarFuncionarioCPF();
+            pedido.setFuncionario(funcionario);
+            System.out.println("Corrigindo Hospede");
+            Hospede hospede = buscarHospedeCPF();
+            pedido.setHospede(hospede);
+            if (funcionario == null || hospede == null) {
+                mainMenu();
+                return; // Saia do método cadastrarPedido
+            }
+            String retorno = conPedido.atualizar(pedido);
+            System.out.println(retorno);
+        } else {
+            System.out.println("Pedido não encontrado!");
+        }
+    }
+
+    private void excluirPedido() {
+        System.out.println("Digite o ID do pedido a ser excluído: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // limpa buffer
+        Pedido pedido = conPedido.buscar(id);
+
+        if (pedido == null) {
+            System.out.println("Pedido não encontrado!");
+            return;
+        }
+
+        String retorno = conPedido.excluir(id);
+        System.out.println(retorno);
+    }
+
+    public void listarPedido() {
+        System.out.println("=+=+=+= Pedidos =+=+=");
+        List<Livro> livros = livroController.listarLivrosEmprestados();
+        livroView.mostrarListaLivros(livros);
+        System.out.println("=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=");
+    }
+
+    private Quarto mostraQuartosDisponiveis() {
+        // TODO
+        throw new UnsupportedOperationException("Unimplemented method 'list'");
+    }
+
+    private LocalDate _getLocalDate(String titulo) {
+        System.out.println("Qual a data de " + titulo + "?");
+        System.out.println("[" + titulo + "]" + " dia: ");
+        int dia = scanner.nextInt();
+        System.out.println("[" + titulo + "]" + " mes (numeral): ");
+        int mes = scanner.nextInt();
+        System.out.println("[" + titulo + "]" + " ano (4 numerais): ");
+        int ano = scanner.nextInt();
+        scanner.nextLine(); // Limpa buffer
+        LocalDate data = LocalDate.of(ano, mes, dia);
+        return data;
+    }
+
+    private Hospede cadastraHospede() {
+        System.out.println("===================================");
+        System.out.println("         CADASTRA HOSPEDE          ");
+        System.out.println("===================================");
+        System.out.println("Digite o nome do Hospede: ");
+        String nome = scanner.nextLine();
+        System.out.println("Digite o cpf do Hospede: ");
+        String cpf = scanner.nextLine();
+        System.out.println("Digite o número de telefone do Hospede: ");
+        String telefone = scanner.nextLine();
+
+        Hospede hospede = new Hospede(nome, cpf, telefone);
+        int idHospede = conHosp.cadastrar(hospede);
+        hospede = conHosp.buscar(idHospede);
+
+        return hospede;
+    }
+
+    private Funcionario acesso() {
         System.out.println("================================");
         System.out.println("         TELA DE LOGIN          ");
         System.out.println("================================");
-        
-        Funcionario funcionario = null;
-        
-        System.out.println("Digite seu login (CPF): ");
-        String cpfFunc = scanner.nextLine();
-        funcionario = conFunc.buscarCpf(cpfFunc);
-        while (funcionario == null) {
-            System.out.println("Usuário não encontrado!");
-            System.out.println("Digite seu login (CPF): ");
-            funcionario = conFunc.buscarCpf(scanner.nextLine());
-        }
+                
+        System.out.println("Digite seu login");
+        Funcionario funcionario = buscarFuncionarioCPF();
         mostrarLogo();
         System.out.println("Bem vindo(a) " + funcionario.getNome() + "!");
+       
+        return funcionario;
+    }
+
+    private Funcionario buscarFuncionarioCPF() {
+        System.out.println("CPF do Funcionario: ");
+        String cpfFunc = scanner.nextLine();
+        Funcionario funcionario = conFunc.buscarCpf(cpfFunc);
+
+        while (funcionario == null) {
+            System.out.println("Usuário não encontrado!");
+            System.out.println("CPF do Funcionario: ");
+            cpfFunc = scanner.nextLine();
+            funcionario = conFunc.buscarCpf(cpfFunc);
+        }
+
+        return funcionario;
     }
 
     private void mostrarLogo() {
@@ -113,5 +265,24 @@ public class View {
         System.out.println("======================================================================================================");
         System.out.println("|          Sistema de Reserva de Hotel - Trabalho final do 3º semestre de ADS (POO e BD)             |");
         System.out.println("======================================================================================================\n");
+    }
+
+    private void mostrarDetalhesPedido(Pedido pedido) {
+        System.out.println(">>> Detalhes do pedido <<<");
+        System.out.println("ID " + pedido.getId());
+        System.out.println("Hospede: " + pedido.getHospede());
+        System.out.println("Data do pedido: " + pedido.getDtPedido());
+        System.out.println("Valor total do pedido: " + pedido.getVlTotalPedido());
+        System.out.println("Funcionario que realizou: " + pedido.getFuncionario());
+
+        System.out.println("=== Lista de reservas do pedido ===");
+        List<Reserva> reservas = pedido.getReservas();
+        for (Reserva reserva : reservas) {
+            mostraDetalhesReserva(reserva);
+        }
+    }
+
+    private void mostraDetalhesReserva(Reserva reserva) {
+        // TODO
     }
 }
