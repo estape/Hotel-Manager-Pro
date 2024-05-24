@@ -1,32 +1,33 @@
 package com.econegigobhoood.HotelManagerPro;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
+import com.econegigobhoood.HotelManagerPro.controller.ControlPessoa;
 import com.econegigobhoood.HotelManagerPro.controller.Controller;
-import com.econegigobhoood.HotelManagerPro.model.Misc;
-import com.econegigobhoood.HotelManagerPro.view.MainMenu;
 import com.econegigobhoood.HotelManagerPro.model.dao.*;
 import com.econegigobhoood.HotelManagerPro.model.entity.*;
+import com.econegigobhoood.HotelManagerPro.view.View;
 
-import java.util.List;
+import java.util.Scanner;
 
 @SpringBootApplication
-public class HotelManagerProApplication {
+public class HotelManagerProApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(HotelManagerProApplication.class, args);
-		
-		// teste pra deixar um pouco diferente do padrão :D
-		// Misc.colorBackground("blue"); 
+	}
 
+	@Override
+	public void run(String... args) throws Exception {
 		// Inicializando as dependências
 		DAOFuncionario daoFunc = new DAOFuncionario();
-		Controller<Funcionario> conFunc = new Controller<>(daoFunc);
+		ControlPessoa<Funcionario> conFunc = new ControlPessoa<>(daoFunc);
 		
 		DAOHospede daoHosp = new DAOHospede();
-		Controller<Hospede> conHosp = new Controller<>(daoHosp);
+		ControlPessoa<Hospede> conHosp = new ControlPessoa<>(daoHosp);
 
 		DAOTipoQuarto daoTipoQua = new DAOTipoQuarto();
 		Controller<TipoQuarto> conTipoQua = new Controller<>(daoTipoQua);
@@ -34,12 +35,16 @@ public class HotelManagerProApplication {
 		// Inicializando o banco de dados
 		DBConfig.createTables();
 
-		// Inicializando o menu principal
-		// MainMenu.callMainMenu();
+		// Inicialização da CLI
+		Scanner scanner = new Scanner(System.in);
+		View view = new View(scanner, conFunc, conHosp, conTipoQua);
+
+		// Inicialização do sistema
+		view.iniciar();
 
 		/***********************************************
 		 *** AREA DE TESTE (Pode apagar tudo depois) ***
-		 ***********************************************/
+			***********************************************/
 		// TESTE FUNCIONARIO
 		Funcionario func = new Funcionario("Agenor", "43223212312", "Vendedor");
 		Funcionario funcBD = new Funcionario(2, "Agenorildson", "43223212312", "Vendedor");
@@ -56,9 +61,9 @@ public class HotelManagerProApplication {
 		// LISTA
 		// List<Funcionario> listaTesteBusca = conFunc.listar(); // Executa
 		// System.out.println("Lista de Funcionarios: ");
-        // for (Funcionario func : listaTesteBusca) {
-        //     System.out.println("ID: " + func.getId() + ", Nome: " + func.getNome());
-        // };
+		// for (Funcionario func : listaTesteBusca) {
+		//     System.out.println("ID: " + func.getId() + ", Nome: " + func.getNome());
+		// };
 
 		// TESTE HOSPEDE
 		Hospede hosp = new Hospede("Agenor", "43223212312", "Vendedor");
@@ -76,9 +81,9 @@ public class HotelManagerProApplication {
 		// LISTA
 		// List<Hospede> listaTesteBusca = conHosp.listar(); // Executa
 		// System.out.println("Lista de Hospede: ");
-        // for (Hospede hospede : listaTesteBusca) {
-        //     System.out.println("ID: " + hospede.getId() + ", Nome: " + hospede.getNome());
-        // };
+		// for (Hospede hospede : listaTesteBusca) {
+		//     System.out.println("ID: " + hospede.getId() + ", Nome: " + hospede.getNome());
+		// };
 
 		// TESTE HOSPEDE
 		TipoQuarto tipoQ = new TipoQuarto("Casal", "Quarto recomendado para um casal", 120);

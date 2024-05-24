@@ -29,10 +29,12 @@ public class Controller<T extends AbstractEntity> implements IController<T> {
 
     // Métodos de controle
     @Override
-    public String cadastrar(T entidade) {
+    public int cadastrar(T entidade) {
         String operacao = "Cadastro";
-        DAOEntidade.cadastrar(entidade);
-        return operacao + " de " + this.entidade + " realizado com sucesso!";
+        int generatedId = DAOEntidade.cadastrar(entidade);
+        System.out.println(operacao + " de " + this.entidade +
+                           " realizado com sucesso!");
+        return generatedId;
     }
 
     @Override
@@ -57,5 +59,14 @@ public class Controller<T extends AbstractEntity> implements IController<T> {
     @Override
     public List<T> listar() {
         return (List<T>) DAOEntidade.listar();
+    }
+
+    // Getters (não tem setter por serem final)
+    public IDAO<T> getDAOEntidade() {
+        return DAOEntidade;
+    }
+
+    public String getEntidade() {
+        return entidade;
     }
 }

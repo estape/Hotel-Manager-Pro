@@ -7,14 +7,14 @@
 CREATE TABLE IF NOT EXISTS funcionario (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
     cargo VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS hospede (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
     telefone VARCHAR(15) NOT NULL
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS carac_quarto (
 CREATE TABLE IF NOT EXISTS pedido (
     id SERIAL PRIMARY KEY,
     dt_pedido DATE NOT NULL,
-    vl_total NUMERIC NOT NULL,
+    vl_total NUMERIC,
     id_hosp_fk INT REFERENCES hospede(id) NOT NULL,
     id_func_fk INT REFERENCES funcionario(id) NOT NULL
 );
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS reserva (
 CREATE TABLE IF NOT EXISTS acompanhante (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(11) NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
     idade INT NOT NULL,
     id_reserva_fk INT REFERENCES reserva(id) NOT NULL
 );

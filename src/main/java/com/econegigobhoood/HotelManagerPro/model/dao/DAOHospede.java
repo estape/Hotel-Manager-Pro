@@ -11,7 +11,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DAOHospede implements IDAO<Hospede> {
+public class DAOHospede implements IDAOPessoa<Hospede> {
+    private String lembreteSQLExcept = "O tratamento deste erro, em aplicações que"
+            + " não sejam CLI (tipo web), deve ser feito em outro lugar, tipo na"
+            + " View. Deixando o tratamento aqui e retornando nulo, se não for CLI,"
+            + " nunca saberemos que o erro aconteceu.";
 
     @Override
     public String getNomeClasse() {
@@ -25,7 +29,19 @@ public class DAOHospede implements IDAO<Hospede> {
     }
 
     @Override
-    public void cadastrar(Hospede entidade) {
+    public int getStmtId(PreparedStatement stmt) throws SQLException {
+        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                int generatedId = generatedKeys.getInt(1);
+                return generatedId;
+            } else {
+                throw new SQLException("Falha no ID gerado");
+            }
+        }
+    }
+
+    @Override
+    public int cadastrar(Hospede entidade) {
         String sql = "INSERT INTO hospede (nome, cpf, telefone) VALUES(?, ?, ?)";
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -33,9 +49,13 @@ public class DAOHospede implements IDAO<Hospede> {
             stmt.setString(3, entidade.getTelefone());
 
             stmt.executeUpdate();
+            int generatedId = getStmtId(stmt);
+            return generatedId;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
+        return 0;
     }
 
     @Override
@@ -50,6 +70,7 @@ public class DAOHospede implements IDAO<Hospede> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
     }
 
@@ -62,6 +83,7 @@ public class DAOHospede implements IDAO<Hospede> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
     }
 
@@ -82,6 +104,29 @@ public class DAOHospede implements IDAO<Hospede> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
+        }
+        return null;
+    }
+
+   @Override
+    public Hospede buscarCpf(String cpf) {
+        String sql = "SELECT * FROM funcionario WHERE cpf = ?";
+
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                String cargo = rs.getString("cargo");
+                Hospede entidade = new Hospede(id, nome, cpf, cargo);
+
+                return entidade;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
         return null;
     }
@@ -104,6 +149,7 @@ public class DAOHospede implements IDAO<Hospede> {
             return entidades;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
         return null;
     }

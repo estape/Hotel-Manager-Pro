@@ -11,7 +11,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DAOFuncionario implements IDAO<Funcionario> {
+public class DAOFuncionario implements IDAOPessoa<Funcionario> {
+    private String lembreteSQLExcept = "O tratamento deste erro, em aplicações que"
+            + " não sejam CLI (tipo web), deve ser feito em outro lugar, tipo na"
+            + " View. Deixando o tratamento aqui e retornando nulo, se não for CLI,"
+            + " nunca saberemos que o erro aconteceu.";
 
     @Override
     public String getNomeClasse() {
@@ -21,11 +25,24 @@ public class DAOFuncionario implements IDAO<Funcionario> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
     @Override
-    public void cadastrar(Funcionario entidade) {
+    public int getStmtId(PreparedStatement stmt) throws SQLException {
+        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                int generatedId = generatedKeys.getInt(1);
+                return generatedId;
+            } else {
+                throw new SQLException("Falha no ID gerado");
+            }
+        }
+    }
+
+    @Override
+    public int cadastrar(Funcionario entidade) {
         String sql = "INSERT INTO funcionario (nome, cpf, cargo) VALUES(?, ?, ?)";
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -33,9 +50,13 @@ public class DAOFuncionario implements IDAO<Funcionario> {
             stmt.setString(3, entidade.getCargo());
 
             stmt.executeUpdate();
+            int generatedId = getStmtId(stmt);
+            return generatedId;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
+        return 0;
     }
 
     @Override
@@ -50,6 +71,7 @@ public class DAOFuncionario implements IDAO<Funcionario> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
     }
 
@@ -62,6 +84,7 @@ public class DAOFuncionario implements IDAO<Funcionario> {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
     }
 
@@ -82,6 +105,29 @@ public class DAOFuncionario implements IDAO<Funcionario> {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
+        }
+        return null;
+    }
+
+    @Override
+    public Funcionario buscarCpf(String cpf) {
+        String sql = "SELECT * FROM funcionario WHERE cpf = ?";
+
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setString(1, cpf);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                String cargo = rs.getString("cargo");
+                Funcionario entidade = new Funcionario(id, nome, cpf, cargo);
+
+                return entidade;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
         return null;
     }
@@ -104,6 +150,7 @@ public class DAOFuncionario implements IDAO<Funcionario> {
             return entidades;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
         }
         return null;
     }

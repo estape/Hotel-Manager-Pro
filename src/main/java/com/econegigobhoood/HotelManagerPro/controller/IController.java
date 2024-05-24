@@ -5,7 +5,7 @@ import com.econegigobhoood.HotelManagerPro.model.abs.AbstractEntity;
 import java.util.List;
 
 public interface IController<T extends AbstractEntity> {
-    String cadastrar(T entidade);
+    int cadastrar(T entidade);
     String atualizar(T entidade);
     String excluir(int id);
     T buscar(int id);
