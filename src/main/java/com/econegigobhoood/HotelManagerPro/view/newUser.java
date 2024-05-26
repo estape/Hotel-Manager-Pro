@@ -1,7 +1,6 @@
 package com.econegigobhoood.HotelManagerPro.view;
 
 import java.util.Scanner;
-
 import com.econegigobhoood.HotelManagerPro.model.Misc;
 
 public class newUser {
