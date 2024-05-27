@@ -16,16 +16,18 @@ public class View {
     private ControlPessoa<Hospede> conHosp;
     private Controller<TipoQuarto> conTipoQua;
     private Controller<Pedido> conPedido;
+    private Controller<Quarto> conQuarto;
 
     // Construtor
     public View(Scanner scanner, ControlPessoa<Funcionario> conFunc,
             ControlPessoa<Hospede> conHosp, Controller<TipoQuarto> conTipoQua,
-            Controller<Pedido> conPedido) {
+            Controller<Pedido> conPedido, Controller<Quarto> conQuarto) {
         this.scanner = scanner;
         this.conFunc = conFunc;
         this.conHosp = conHosp;
         this.conTipoQua = conTipoQua;
         this.conPedido = conPedido;
+        this.conQuarto = conQuarto;
     }
 
     // Métodos
@@ -151,12 +153,12 @@ public class View {
         Pedido pedido = conPedido.buscar(id);
 
         if (pedido != null) {
-            System.out.println("Corrigindo Funcionario");
-            Funcionario funcionario = buscarFuncionarioCPF();
-            pedido.setFuncionario(funcionario);
             System.out.println("Corrigindo Hospede");
             Hospede hospede = buscarHospedeCPF();
             pedido.setHospede(hospede);
+            System.out.println("Corrigindo Funcionario");
+            Funcionario funcionario = buscarFuncionarioCPF();
+            pedido.setFuncionario(funcionario);
             if (funcionario == null || hospede == null) {
                 mainMenu();
                 return; // Saia do método cadastrarPedido
@@ -184,9 +186,40 @@ public class View {
     }
 
     public void listarPedido() {
-        System.out.println("=+=+=+= Pedidos =+=+=");
-        List<Livro> livros = livroController.listarLivrosEmprestados();
-        livroView.mostrarListaLivros(livros);
+        // System.out.println("Como gostaria de listar?");
+        // System.out.println("1 - Todos os pedidos");
+        // System.out.println("2 - Todos os pedidos do Hospede");
+        // System.out.println("3 - Todos os pedidos do Funcionario");
+        // int opcao = scanner.nextInt();
+        // scanner.nextLine(); // limpa buffer
+
+        // switch(opcao) {
+        //     case 1 -> {
+        //         conPedido.listar();
+        //     }
+        //     case 2 -> {
+        //         System.out.println("Corrigindo Hospede");
+        //         Hospede hospede = buscarHospedeCPF();
+        //         pedido.setHospede(hospede);
+        //         conPedido.listar("porHospede", 1);
+        //     }
+        //     case 3 -> { 
+        //         System.out.println("Corrigindo Hospede");
+        //         Hospede hospede = buscarHospedeCPF();
+        //         pedido.setHospede(hospede);
+        //     }
+        //     default -> System.out.println("Opção invalida.");
+        // }
+
+        System.out.println("=+=+=+= Lista de Pedidos =+=+=+=");
+        List<Pedido> pedidos = conPedido.listar();
+        for (Pedido pedido : pedidos) {
+            System.out.println(">>> Pedido ID" + pedido.getId() + " <<<");
+            System.out.println("Data pedido: " + pedido.getDtPedido());
+            System.out.println("Hospede: " + pedido.getHospede().getNome());
+            System.out.println("Valor total: R$" + pedido.getVlTotalPedido());
+            System.out.println("--------------------");
+        }
         System.out.println("=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=");
     }
 

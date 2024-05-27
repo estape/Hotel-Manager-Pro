@@ -1,6 +1,5 @@
 package com.econegigobhoood.HotelManagerPro.model.dao;
 
-
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
 import com.econegigobhoood.HotelManagerPro.model.entity.Funcionario;
 import com.econegigobhoood.HotelManagerPro.model.entity.Hospede;
@@ -21,8 +20,10 @@ public class DAOPedido implements IDAO<Pedido> {
             "não sejam CLI (tipo web), deve ser feito em outro lugar, tipo na " +
             "View. Deixando o tratamento aqui e retornando nulo, se não for CLI, " +
             "nunca saberemos que o erro aconteceu. ";
+    // Importa as Foreign Keys
     private DAOFuncionario daoFuncionario;
     private DAOHospede daoHospede;
+    private DAOReserva daoReserva;
 
     @Override
     public String getNomeClasse() {
@@ -107,12 +108,15 @@ public class DAOPedido implements IDAO<Pedido> {
             if(rs.next()) {
                 LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
                 double vlTotalPedido = rs.getDouble("valor_total_pedido");
+                // Pega e busca Hospede
                 int idHosp = rs.getInt("id_hosp_fk");
                 Hospede hospede = daoHospede.buscar(idHosp);
+                // Pega e busca Funcionario
                 int idFunc = rs.getInt("id_func_fk");
                 Funcionario funcionario = daoFuncionario.buscar(idFunc);
-                // TODO: A lista de reservas
-                List<Reserva> reservas = DAOReserva.listarFkPedido(id);
+                // busca Reservas relacionadas
+                List<Reserva> reservas = daoReserva.getFKList(id, "pedido");
+                
                 Pedido entidade = new Pedido(id, dtPedido, vlTotalPedido,
                         hospede, funcionario, reservas);
 
@@ -133,42 +137,20 @@ public class DAOPedido implements IDAO<Pedido> {
         try (PreparedStatement stmt = dbConnect(sql)) {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()) {
-                String nome = rs.getString("nome");
-                String cpf = rs.getString("cpf");
-                String cargo = rs.getString("cargo");
+                LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
+                double vlTotalPedido = rs.getDouble("valor_total_pedido");
+                // Pega e busca Hospede
+                int idHosp = rs.getInt("id_hosp_fk");
+                Hospede hospede = daoHospede.buscar(idHosp);
+                // Pega e busca Funcionario
+                int idFunc = rs.getInt("id_func_fk");
+                Funcionario funcionario = daoFuncionario.buscar(idFunc);
+                // busca Reservas relacionadas
                 int id = rs.getInt("id");
-                Pedido entidade = new Pedido(id, nome, cpf, cargo);
-                entidades.add(entidade);
-            }
-            return entidades;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(lembreteSQLExcept);
-        }
-        return null;
-    }
-
-    public List<Pedido> listar(String tipoListagem, int idPesq) {
-        List<Pedido> entidades = new ArrayList<Pedido>();
-        String sql;
-
-        if (tipoListagem != null && !tipoListagem.isEmpty()) {
-            if (tipoListagem.equals("porHospede")) {
-                sql = "SELECT * FROM pedido WHERE id_hosp_fk = ?";
-            } else if (tipoListagem.equals("porFuncionario")) {
-                sql = "SELECT * FROM pedido WHERE id_func_fk = ?";
-            }
-        }
-        
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            stmt.setInt(1, idPesq);
-            ResultSet rs = stmt.executeQuery();
-            while(rs.next()) {
-                String nome = rs.getString("nome");
-                String cpf = rs.getString("cpf");
-                String cargo = rs.getString("cargo");
-                int id = rs.getInt("id");
-                Pedido entidade = new Pedido(id, nome, cpf, cargo);
+                List<Reserva> reservas = daoReserva.getFKList(id, "pedido");
+                
+                Pedido entidade = new Pedido(id, dtPedido, vlTotalPedido,
+                        hospede, funcionario, reservas);
                 entidades.add(entidade);
             }
             return entidades;

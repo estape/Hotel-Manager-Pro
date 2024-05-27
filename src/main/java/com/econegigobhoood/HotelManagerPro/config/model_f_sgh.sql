@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS tipo_quarto (
     valor_unit NUMERIC NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS res_status (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL UNIQUE
+);
+
 -- >>>>=====================<<<<
 -- >>> tabelas independentes <<<
 -- >>>>=====================<<<<
@@ -44,37 +49,44 @@ CREATE TABLE IF NOT EXISTS pedido (
 );
 
 CREATE TABLE IF NOT EXISTS quarto (
-    num SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    num_quarto INT NOT NULL UNIQUE,
     qtd_cama_solt INT NOT NULL,
     qtd_cama_cas INT NOT NULL,
     qtd_banh INT NOT NULL,
     info_adc VARCHAR(255) NOT NULL,
-    vl_quarto NUMERIC NOT NULL,
-    id_tipoquar_fk INT REFERENCES tipo_quarto(id) ON DELETE CASCADE NOT NULL,
-    id_caracquar_fk INT REFERENCES carac_quarto(id) ON DELETE CASCADE NOT NULL
+    id_tipoquar_fk INT REFERENCES tipo_quarto(id) ON DELETE CASCADE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS reserva (
     id SERIAL PRIMARY KEY,
     dt_entrada DATE NOT NULL,
     dt_saida DATE NOT NULL,
-    res_status VARCHAR(255) NOT NULL,
+    id_res_status_fk INT REFERENCES res_status(id) ON DELETE CASCADE NOT NULL,
     id_pedido_fk INT REFERENCES pedido(id) ON DELETE CASCADE NOT NULL,
-    num_quarto_fk INT REFERENCES quarto(num) ON DELETE CASCADE NOT NULL
+    id_quarto_fk INT REFERENCES quarto(id) ON DELETE CASCADE NOT NULL
 );
 
--- >>>>=======================<<<<
--- >>> criando usuario inicial <<<
--- >>>>=======================<<<<
+-- >>>>========================<<<<
+-- >>> populando banco de dados <<<
+-- >>>>========================<<<<
 
--- Verifica se existe esse cpf, se não, fazer o insert.
--- INSERT com SELECT realiza a mesma coisa que INSERT com VALUES
--- A diferenã é que VALUES não aceita clausula WHERE.
--- Como precisamos validar essa subquery, usamos INSERT SELECT WHERE
--- A utilização do SELECT 1 é convenção para verificar existencia
+-- ON CONFLICT: Se encontrar conflito no atributo nome (que precisa
+-- ter clausula UNIQUE) DO NOTHING (Faça nada), ou seja, se tiver
+-- conflito no valor a ser inserido em nome (for igual a um valor
+-- existente), faça nada.
+INSERT INTO res_status (nome)
+VALUES 
+    ('Reservado'), 
+    ('Check-in feito'), 
+    ('Atrasado'), 
+    ('Cancelado')
+ON CONFLICT (nome) DO NOTHING;
+
+-- Processo parecido com o de cima, só que no campo cpf.
 INSERT INTO funcionario (nome, cpf, cargo)
-SELECT 'admin', 'admin', 'admin'
-WHERE NOT EXISTS (SELECT 1 FROM funcionario WHERE cpf = 'admin');
+VALUES ('admin', 'admin', 'admin')
+ON CONFLICT (cpf) DO NOTHING;
 
 -- >>>>=======================<<<<
 -- >>>          views          <<<
@@ -87,7 +99,7 @@ SELECT
 FROM 
     reserva AS r
 JOIN 
-    quarto AS q ON r.num_quarto_fk = q.num
+    quarto AS q ON r.id_quarto_fk = q.id
 JOIN 
     tipo_quarto AS t ON q.id_tipoquar_fk = t.id;
 
@@ -102,7 +114,7 @@ JOIN
 JOIN 
     -- Aqui, apesar de ter só um valor não precisando filtra-lo
     -- necessitamos específicar o ponto de junção com o ON.
-    quarto AS q ON r.num_quarto_fk = q.num
+    quarto AS q ON r.id_quarto_fk = q.id
 JOIN 
     tipo_quarto AS t ON q.id_tipoquar_fk = t.id
 GROUP BY 

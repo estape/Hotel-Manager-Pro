@@ -35,12 +35,16 @@ public class HotelManagerProApplication implements CommandLineRunner {
 		DAOPedido daoPedido = new DAOPedido();
 		Controller<Pedido> conPedido = new Controller<>(daoPedido);
 
+		DAOQuarto daoQuarto = new DAOQuarto();
+		Controller<Quarto> conQuarto = new Controller<>(daoQuarto);
+
 		// Inicializando o banco de dados
 		DBConfig.createTables();
 
 		// Inicialização da CLI
 		Scanner scanner = new Scanner(System.in);
-		View view = new View(scanner, conFunc, conHosp, conTipoQua, conPedido);
+		View view = new View(scanner, conFunc, conHosp, conTipoQua, conPedido,
+							 conQuarto);
 
 		// Inicialização do sistema
 		view.iniciar();
