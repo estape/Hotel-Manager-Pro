@@ -10,6 +10,15 @@
 -- >>>>=====================<<<<
 -- >>> tabelas independentes <<<
 -- >>>>=====================<<<<
+CREATE TABLE IF NOT EXISTS reserva_diaria_log (
+	id SERIAL PRIMARY KEY,
+	nome_func VARCHAR(255),
+	dt_acesso DATE
+);
+
+DELETE FROM reserva_diaria_log
+WHERE dt_acesso != CURRENT_DATE;
+
 CREATE TABLE IF NOT EXISTS funcionario (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -92,21 +101,26 @@ ON CONFLICT (cpf) DO NOTHING;
 -- >>>          views          <<<
 -- >>>>=======================<<<<
 
+-- Dropa view, pois view não aceita IF NOT EXISTS
+DROP VIEW IF EXISTS valor_reserva;
+-- Cria nova view
 CREATE VIEW valor_reserva AS
 SELECT 
     r.id AS reserva_id,
-    (r.data_saida - r.data_entrada) * t.valor_unitario AS valor_reserva
+    (r.dt_saida - r.dt_entrada) * t.valor_unit AS valor_reserva
 FROM 
     reserva AS r
 JOIN 
     quarto AS q ON r.id_quarto_fk = q.id
 JOIN 
     tipo_quarto AS t ON q.id_tipoquar_fk = t.id;
-
+-- Dropa view, pois view não aceita IF NOT EXISTS
+DROP VIEW IF EXISTS valor_total_pedido;
+-- Cria nova view
 CREATE VIEW valor_total_pedido AS
 SELECT 
     p.id AS pedido_id,
-    SUM((r.data_saida - r.data_entrada) * t.valor_unitario) AS valor_total_pedido
+    SUM((r.dt_saida - r.dt_entrada) * t.valor_unit) AS valor_total_pedido
 FROM 
     pedido AS p
 JOIN 

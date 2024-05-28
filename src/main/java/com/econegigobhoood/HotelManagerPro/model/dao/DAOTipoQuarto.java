@@ -24,8 +24,10 @@ public class DAOTipoQuarto implements IDAO<TipoQuarto> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
+
 
     @Override
     public int getStmtId(PreparedStatement stmt) throws SQLException {
@@ -41,7 +43,7 @@ public class DAOTipoQuarto implements IDAO<TipoQuarto> {
 
     @Override
     public int cadastrar(TipoQuarto entidade) {
-        String sql = "INSERT INTO tipo_quarto (nome, descricao, valor) " +
+        String sql = "INSERT INTO tipo_quarto (nome, descricao, valor_unit) " +
                      "VALUES (?, ?, ?)";
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -60,7 +62,7 @@ public class DAOTipoQuarto implements IDAO<TipoQuarto> {
 
     @Override
     public void atualizar(TipoQuarto entidade) {
-        String sql = "UPDATE tipo_quarto SET nome = ?, descricao = ?, valor = ?"
+        String sql = "UPDATE tipo_quarto SET nome = ?, descricao = ?, valor_unit = ?"
                      + " WHERE id = ?";
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, entidade.getNome());
@@ -94,14 +96,15 @@ public class DAOTipoQuarto implements IDAO<TipoQuarto> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                String nome = rs.getString("nome");
-                String desc = rs.getString("descricao");
-                double valor = rs.getDouble("valor");
-                TipoQuarto entidade = new TipoQuarto(id, nome, desc, valor);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    String nome = rs.getString("nome");
+                    String desc = rs.getString("descricao");
+                    double valor = rs.getDouble("valor_unit");
+                    TipoQuarto entidade = new TipoQuarto(id, nome, desc, valor);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,12 +118,12 @@ public class DAOTipoQuarto implements IDAO<TipoQuarto> {
         List<TipoQuarto> entidades = new ArrayList<TipoQuarto>();
         String sql = "SELECT * FROM tipo_quarto";
 
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while(rs.next()) {
                 String nome = rs.getString("nome");
                 String desc = rs.getString("descricao");
-                double valor = rs.getDouble("valor");
+                double valor = rs.getDouble("valor_unit");
                 int id = rs.getInt("id");
                 TipoQuarto entidade = new TipoQuarto(id, nome, desc, valor);
                 entidades.add(entidade);

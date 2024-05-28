@@ -20,15 +20,23 @@ public class Pedido extends AbstractEntity {
         this.funcionario = funcionario;
     }
 
-    // Construtor consulta
+    // Construtor de insert inicial
+    public Pedido (int id, LocalDate dtPedido, Hospede hospede,
+            Funcionario funcionario) {
+        super.setId(id);
+        this.dtPedido = dtPedido;
+        this.hospede = hospede;
+        this.funcionario = funcionario;
+    }
+
+    // Construtor de insert completo
     public Pedido (int id, LocalDate dtPedido, double vlTotalPedido,
-            Hospede hospede, Funcionario funcionario, List<Reserva> reservas) {
+            Hospede hospede, Funcionario funcionario) {
         super.setId(id);
         this.dtPedido = dtPedido;
         this.vlTotalPedido = vlTotalPedido;
         this.hospede = hospede;
         this.funcionario = funcionario;
-        this.reservas = reservas;
     }
     
     // Get n Set

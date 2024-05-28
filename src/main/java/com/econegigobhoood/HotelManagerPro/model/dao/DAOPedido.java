@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
@@ -24,6 +23,15 @@ public class DAOPedido implements IDAO<Pedido> {
     private DAOFuncionario daoFuncionario;
     private DAOHospede daoHospede;
     private DAOReserva daoReserva;
+    
+    public DAOPedido(DAOFuncionario daoFuncionario, DAOHospede daoHospede) {
+        this.daoFuncionario = daoFuncionario;
+        this.daoHospede = daoHospede;
+    }
+
+    public void setDaoReserva(DAOReserva daoReserva) {
+        this.daoReserva = daoReserva;
+    }
 
     @Override
     public String getNomeClasse() {
@@ -33,7 +41,8 @@ public class DAOPedido implements IDAO<Pedido> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
     @Override
@@ -104,23 +113,54 @@ public class DAOPedido implements IDAO<Pedido> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
-                double vlTotalPedido = rs.getDouble("valor_total_pedido");
-                // Pega e busca Hospede
-                int idHosp = rs.getInt("id_hosp_fk");
-                Hospede hospede = daoHospede.buscar(idHosp);
-                // Pega e busca Funcionario
-                int idFunc = rs.getInt("id_func_fk");
-                Funcionario funcionario = daoFuncionario.buscar(idFunc);
-                // busca Reservas relacionadas
-                List<Reserva> reservas = daoReserva.getFKList(id, "pedido");
-                
-                Pedido entidade = new Pedido(id, dtPedido, vlTotalPedido,
-                        hospede, funcionario, reservas);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
+                    double vlTotalPedido = rs.getDouble("valor_total_pedido");
+                    // Pega e busca Hospede
+                    int idHosp = rs.getInt("id_hosp_fk");
+                    Hospede hospede = daoHospede.buscar(idHosp);
+                    // Pega e busca Funcionario
+                    int idFunc = rs.getInt("id_func_fk");
+                    Funcionario funcionario = daoFuncionario.buscar(idFunc);
 
-                return entidade;
+                    Pedido entidade = new Pedido(id, dtPedido, vlTotalPedido,
+                            hospede, funcionario);
+
+                    return entidade;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
+        }
+        return null;
+    }
+
+    public List<Reserva> getListReserva(int idPedido) {
+        return daoReserva.getFKPedido(idPedido);
+    }
+
+
+    public Pedido buscarInicial(int id) {
+        String sql = "SELECT * FROM pedido WHERE id = ?";
+
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setInt(1, id);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
+                    // Pega e busca Hospede
+                    int idHosp = rs.getInt("id_hosp_fk");
+                    Hospede hospede = daoHospede.buscar(idHosp);
+                    // Pega e busca Funcionario
+                    int idFunc = rs.getInt("id_func_fk");
+                    Funcionario funcionario = daoFuncionario.buscar(idFunc);
+                    
+                    Pedido entidade = new Pedido(id, dtPedido, hospede, funcionario);
+
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -132,10 +172,12 @@ public class DAOPedido implements IDAO<Pedido> {
     @Override
     public List<Pedido> listar() {
         List<Pedido> entidades = new ArrayList<Pedido>();
-        String sql = "SELECT * FROM pedido";
+        String sql = "SELECT p.*, vp.valor_total_pedido " +
+                      "FROM pedido AS p " +
+                      "JOIN valor_total_pedido AS vp ON p.id = vp.pedido_id ";
         
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery();) {
             while(rs.next()) {
                 LocalDate dtPedido = rs.getObject("dt_pedido", LocalDate.class);
                 double vlTotalPedido = rs.getDouble("valor_total_pedido");
@@ -147,10 +189,9 @@ public class DAOPedido implements IDAO<Pedido> {
                 Funcionario funcionario = daoFuncionario.buscar(idFunc);
                 // busca Reservas relacionadas
                 int id = rs.getInt("id");
-                List<Reserva> reservas = daoReserva.getFKList(id, "pedido");
                 
                 Pedido entidade = new Pedido(id, dtPedido, vlTotalPedido,
-                        hospede, funcionario, reservas);
+                        hospede, funcionario);
                 entidades.add(entidade);
             }
             return entidades;

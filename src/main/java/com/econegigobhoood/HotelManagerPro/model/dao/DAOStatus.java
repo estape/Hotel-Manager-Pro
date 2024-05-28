@@ -25,7 +25,8 @@ public class DAOStatus implements IDAO<Status> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
     @Override
@@ -89,12 +90,13 @@ public class DAOStatus implements IDAO<Status> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                String nome = rs.getString("nome");
-                Status entidade = new Status(id, nome);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    String nome = rs.getString("nome");
+                    Status entidade = new Status(id, nome);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -108,8 +110,8 @@ public class DAOStatus implements IDAO<Status> {
         List<Status> entidades = new ArrayList<Status>();
         String sql = "SELECT * FROM res_status";
 
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery();) {
             while(rs.next()) {
                 String nome = rs.getString("nome");
                 int id = rs.getInt("id");

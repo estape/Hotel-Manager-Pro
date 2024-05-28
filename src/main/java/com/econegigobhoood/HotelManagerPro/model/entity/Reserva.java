@@ -20,7 +20,6 @@ public class Reserva extends AbstractEntity {
         this.dtSaida = dtSaida;
         this.pedido = pedido;
         this.quarto = quarto;
-        this.status.setId(1);
     }
     
     // Construtor para consulta

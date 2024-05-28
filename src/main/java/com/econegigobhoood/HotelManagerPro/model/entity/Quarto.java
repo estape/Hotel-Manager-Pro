@@ -2,8 +2,6 @@ package com.econegigobhoood.HotelManagerPro.model.entity;
 
 import com.econegigobhoood.HotelManagerPro.model.abs.AbstractEntity;
 
-import java.util.List;
-
 public class Quarto extends AbstractEntity {
     private int numQuarto;
     private int qtdCamaSolt;
@@ -12,7 +10,6 @@ public class Quarto extends AbstractEntity {
     private String infoAdc;
     private TipoQuarto tipo;
     private double vlQuarto;
-    private List<Reserva> reservas;
 
     // Construtor cadastro
     public Quarto(int numQuarto, int qtdCamaSolt, int qtdCamaCas,
@@ -28,15 +25,15 @@ public class Quarto extends AbstractEntity {
     // Construtor consulta
     public Quarto(int id, int numQuarto, int qtdCamaSolt, int qtdCamaCas,
                   int qtdBanho, String infoAdc, double vlQuarto,
-                  TipoQuarto tipo, List<Reserva> reservas) {
+                  TipoQuarto tipo) {
         super.setId(id);
         this.numQuarto = numQuarto;
         this.qtdCamaSolt = qtdCamaSolt;
         this.qtdCamaCas = qtdCamaCas;
         this.qtdBanho = qtdBanho;
         this.infoAdc = infoAdc;
+        this.vlQuarto = vlQuarto;
         this.tipo = tipo;
-        this.reservas = reservas;
     }
 
     // Getter n setter
@@ -81,11 +78,5 @@ public class Quarto extends AbstractEntity {
     }
     public void setTipo(TipoQuarto tipo) {
         this.tipo = tipo;
-    }
-    public List<Reserva> getReservas() {
-        return reservas;
-    }
-    public void setReservas(List<Reserva> reservas) {
-        this.reservas = reservas;
     }
 }

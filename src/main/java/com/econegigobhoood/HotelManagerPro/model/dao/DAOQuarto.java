@@ -1,7 +1,6 @@
 package com.econegigobhoood.HotelManagerPro.model.dao;
 
 import com.econegigobhoood.HotelManagerPro.model.entity.Quarto;
-import com.econegigobhoood.HotelManagerPro.model.entity.Reserva;
 import com.econegigobhoood.HotelManagerPro.model.entity.TipoQuarto;
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
 
@@ -21,7 +20,10 @@ public class DAOQuarto implements IDAO<Quarto> {
             "nunca saberemos que o erro aconteceu. ";
     // Importa as Foreign Keys
     private DAOTipoQuarto daoTipo;
-    private DAOReserva daoReserva;
+
+    public DAOQuarto(DAOTipoQuarto daoTipo) {
+        this.daoTipo = daoTipo;
+    }
 
     @Override
     public String getNomeClasse() {
@@ -31,7 +33,8 @@ public class DAOQuarto implements IDAO<Quarto> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
     @Override
@@ -71,13 +74,13 @@ public class DAOQuarto implements IDAO<Quarto> {
 
     @Override
     public void atualizar(Quarto entidade) {
-        // BUSCA DEITA PELO NUMERO DO QUARTO, NÃO ID
+        // BUSCA FEITA PELO NUMERO DO QUARTO, NÃO ID
         /*
         * Não atualizamos as Reservas aqui pois elas tem-de ser
         * atualizadas unitariamente
         */ 
         String sql = "UPDATE quarto " +
-                     "SET qtd_cama_solt = ?, qtd_cama_cas = ?, qtd_banh = ? " +
+                     "SET qtd_cama_solt = ?, qtd_cama_cas = ?, qtd_banh = ?, " +
                      "info_adc = ?, id_tipoquar_fk = ? " +
                      "WHERE num_quarto = ?";
         try (PreparedStatement stmt = dbConnect(sql)) {
@@ -117,24 +120,23 @@ public class DAOQuarto implements IDAO<Quarto> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                int numQuarto = rs.getInt("num_quarto");
-                int qtdCamaSolt = rs.getInt("qtd_cama_solt");
-                int qtdCamaCas = rs.getInt("qtd_cama_cas");
-                int qtdBanho = rs.getInt("qtd_banh");
-                String infoAdc = rs.getString("infoAdc");
-                double vlQuarto = rs.getDouble("valor_unit");
-                // pega e busca Tipo
-                int idTipo = rs.getInt("id_tipoquar_fk");
-                TipoQuarto tipo = daoTipo.buscar(idTipo);
-                // busca Reservas relacionadas
-                List<Reserva> reservas = daoReserva.getFKList(id, "quarto");
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    int numQuarto = rs.getInt("num_quarto");
+                    int qtdCamaSolt = rs.getInt("qtd_cama_solt");
+                    int qtdCamaCas = rs.getInt("qtd_cama_cas");
+                    int qtdBanho = rs.getInt("qtd_banh");
+                    String infoAdc = rs.getString("info_adc");
+                    double vlQuarto = rs.getDouble("valor_unit");
+                    // pega e busca Tipo
+                    int idTipo = rs.getInt("id_tipoquar_fk");
+                    TipoQuarto tipo = daoTipo.buscar(idTipo);
 
-                Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt, qtdCamaCas,
-                        qtdBanho, infoAdc, vlQuarto, tipo, reservas);
+                    Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt, qtdCamaCas,
+                            qtdBanho, infoAdc, vlQuarto, tipo);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,24 +153,23 @@ public class DAOQuarto implements IDAO<Quarto> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, numQuarto);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                int id = rs.getInt("id");
-                int qtdCamaSolt = rs.getInt("qtd_cama_solt");
-                int qtdCamaCas = rs.getInt("qtd_cama_cas");
-                int qtdBanho = rs.getInt("qtd_banh");
-                String infoAdc = rs.getString("infoAdc");
-                double vlQuarto = rs.getDouble("valor_unit");
-                // pega e busca Tipo
-                int idTipo = rs.getInt("id_tipoquar_fk");
-                TipoQuarto tipo = daoTipo.buscar(idTipo);
-                // busca Reservas relacionadas
-                List<Reserva> reservas = daoReserva.getFKList(id, "quarto");
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    int id = rs.getInt("id");
+                    int qtdCamaSolt = rs.getInt("qtd_cama_solt");
+                    int qtdCamaCas = rs.getInt("qtd_cama_cas");
+                    int qtdBanho = rs.getInt("qtd_banh");
+                    String infoAdc = rs.getString("info_adc");
+                    double vlQuarto = rs.getDouble("valor_unit");
+                    // pega e busca Tipo
+                    int idTipo = rs.getInt("id_tipoquar_fk");
+                    TipoQuarto tipo = daoTipo.buscar(idTipo);
 
-                Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt, qtdCamaCas,
-                        qtdBanho, infoAdc, vlQuarto, tipo, reservas);
+                    Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt, qtdCamaCas,
+                            qtdBanho, infoAdc, vlQuarto, tipo);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -180,30 +181,69 @@ public class DAOQuarto implements IDAO<Quarto> {
     @Override
     public List<Quarto> listar() {
         List<Quarto> entidades = new ArrayList<Quarto>();
-        String sql = "SELECT * FROM quarto";
+        String sql = "SELECT q.*, t.valor_unit " +
+                     "FROM quarto AS q " +
+                     "JOIN tipo_quarto AS t ON q.id_tipoquar_fk = t.id";
         
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while(rs.next()) {
                 int id = rs.getInt("id");
                 int numQuarto = rs.getInt("num_quarto");
                 int qtdCamaSolt = rs.getInt("qtd_cama_solt");
                 int qtdCamaCas = rs.getInt("qtd_cama_cas");
                 int qtdBanho = rs.getInt("qtd_banh");
-                String infoAdc = rs.getString("infoAdc");
+                String infoAdc = rs.getString("info_adc");
                 double vlQuarto = rs.getDouble("valor_unit");
                 // pega e busca Tipo
                 int idTipo = rs.getInt("id_tipoquar_fk");
                 TipoQuarto tipo = daoTipo.buscar(idTipo);
-                // busca Reservas relacionadas
-                List<Reserva> reservas = daoReserva.getFKList(id, "quarto");
 
                 Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt,
-                        qtdCamaCas, qtdBanho, infoAdc, vlQuarto, tipo, reservas);
+                        qtdCamaCas, qtdBanho, infoAdc, vlQuarto, tipo);
                         
                 entidades.add(entidade);
             }
             return entidades;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(lembreteSQLExcept);
+        }
+        return null;
+    }
+
+    public List<Quarto> listarDisponivel(LocalDate dtEntrada, LocalDate dtSaida) {
+        List<Quarto> entidades = new ArrayList<Quarto>();
+        String sql = "SELECT q.*, t.valor_unit " +
+                     "FROM quarto q " +
+                     "LEFT JOIN reserva r ON q.id = r.id_quarto_fk " +
+                     "AND (r.dt_entrada < ? AND r.dt_saida > ?) " +
+                     "JOIN tipo_quarto t ON q.id_tipoquar_fk = t.id " +
+                     "WHERE r.id_quarto_fk IS NULL";
+        
+        try (PreparedStatement stmt = dbConnect(sql)) {
+            stmt.setObject(1, dtSaida);
+            stmt.setObject(2, dtEntrada);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while(rs.next()) {
+                    int id = rs.getInt("id");
+                    int numQuarto = rs.getInt("num_quarto");
+                    int qtdCamaSolt = rs.getInt("qtd_cama_solt");
+                    int qtdCamaCas = rs.getInt("qtd_cama_cas");
+                    int qtdBanho = rs.getInt("qtd_banh");
+                    String infoAdc = rs.getString("info_adc");
+                    double vlQuarto = rs.getDouble("valor_unit");
+                    // pega e busca Tipo
+                    int idTipo = rs.getInt("id_tipoquar_fk");
+                    TipoQuarto tipo = daoTipo.buscar(idTipo);
+
+                    Quarto entidade = new Quarto(id, numQuarto, qtdCamaSolt,
+                            qtdCamaCas, qtdBanho, infoAdc, vlQuarto, tipo);
+                            
+                    entidades.add(entidade);
+                }
+            return entidades;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(lembreteSQLExcept);

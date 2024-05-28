@@ -5,12 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.econegigobhoood.HotelManagerPro.config.DBConfig;
-import com.econegigobhoood.HotelManagerPro.controller.ControlPessoa;
-import com.econegigobhoood.HotelManagerPro.controller.Controller;
+import com.econegigobhoood.HotelManagerPro.controller.*;
 import com.econegigobhoood.HotelManagerPro.model.dao.*;
 import com.econegigobhoood.HotelManagerPro.model.entity.*;
 import com.econegigobhoood.HotelManagerPro.view.View;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -31,20 +31,28 @@ public class HotelManagerProApplication implements CommandLineRunner {
 
 		DAOTipoQuarto daoTipoQua = new DAOTipoQuarto();
 		Controller<TipoQuarto> conTipoQua = new Controller<>(daoTipoQua);
+		
+		DAOQuarto daoQuarto = new DAOQuarto(daoTipoQua);
+		ControlQuarto<Quarto> conQuarto = new ControlQuarto<>(daoQuarto);
+		
+		DAOStatus daoStatus = new DAOStatus();
+		
+		DAOPedido daoPedido = new DAOPedido(daoFunc, daoHosp);
+		DAOReserva daoReserva = new DAOReserva(daoPedido, daoQuarto, daoStatus);
+		Controller<Reserva> conRes = new Controller<>(daoReserva);
+		daoPedido.setDaoReserva(daoReserva);
+		ControlPedido<Pedido> conPedido = new ControlPedido<>(daoPedido);
 
-		DAOPedido daoPedido = new DAOPedido();
-		Controller<Pedido> conPedido = new Controller<>(daoPedido);
-
-		DAOQuarto daoQuarto = new DAOQuarto();
-		Controller<Quarto> conQuarto = new Controller<>(daoQuarto);
-
+		DAOContaAcesso daoContaAcesso = new DAOContaAcesso();
+		
 		// Inicializando o banco de dados
 		DBConfig.createTables();
 
 		// Inicialização da CLI
 		Scanner scanner = new Scanner(System.in);
-		View view = new View(scanner, conFunc, conHosp, conTipoQua, conPedido,
-							 conQuarto);
+		LocalDate hoje = LocalDate.now();
+		View view = new View(scanner, hoje, conFunc, conHosp, conTipoQua, conPedido,
+							conQuarto, conRes, daoContaAcesso);
 
 		// Inicialização do sistema
 		view.iniciar();

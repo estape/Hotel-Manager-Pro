@@ -94,14 +94,15 @@ public class DAOFuncionario implements IDAOPessoa<Funcionario> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                String nome = rs.getString("nome");
-                String cpf = rs.getString("cpf");
-                String cargo = rs.getString("cargo");
-                Funcionario entidade = new Funcionario(id, nome, cpf, cargo);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    String nome = rs.getString("nome");
+                    String cpf = rs.getString("cpf");
+                    String cargo = rs.getString("cargo");
+                    Funcionario entidade = new Funcionario(id, nome, cpf, cargo);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -116,14 +117,15 @@ public class DAOFuncionario implements IDAOPessoa<Funcionario> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, cpf);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                int id = rs.getInt("id");
-                String nome = rs.getString("nome");
-                String cargo = rs.getString("cargo");
-                Funcionario entidade = new Funcionario(id, nome, cpf, cargo);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    String cargo = rs.getString("cargo");
+                    Funcionario entidade = new Funcionario(id, nome, cpf, cargo);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -137,8 +139,8 @@ public class DAOFuncionario implements IDAOPessoa<Funcionario> {
         List<Funcionario> entidades = new ArrayList<Funcionario>();
         String sql = "SELECT * FROM funcionario";
 
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery();) {
             while(rs.next()) {
                 String nome = rs.getString("nome");
                 String cpf = rs.getString("cpf");

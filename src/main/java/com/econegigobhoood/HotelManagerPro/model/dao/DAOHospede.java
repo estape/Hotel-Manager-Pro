@@ -25,15 +25,15 @@ public class DAOHospede implements IDAOPessoa<Hospede> {
     @Override
     public PreparedStatement dbConnect(String sql) throws SQLException {
         Connection connection = DBConfig.getCon();
-        return connection.prepareStatement(sql);
+        return connection.prepareStatement(sql,
+                PreparedStatement.RETURN_GENERATED_KEYS);
     }
 
     @Override
     public int getStmtId(PreparedStatement stmt) throws SQLException {
         try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
             if (generatedKeys.next()) {
-                int generatedId = generatedKeys.getInt(1);
-                return generatedId;
+                return generatedKeys.getInt(1);
             } else {
                 throw new SQLException("Falha no ID gerado");
             }
@@ -49,8 +49,7 @@ public class DAOHospede implements IDAOPessoa<Hospede> {
             stmt.setString(3, entidade.getTelefone());
 
             stmt.executeUpdate();
-            int generatedId = getStmtId(stmt);
-            return generatedId;
+            return getStmtId(stmt);
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(lembreteSQLExcept);
@@ -93,14 +92,15 @@ public class DAOHospede implements IDAOPessoa<Hospede> {
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                String nome = rs.getString("nome");
-                String cpf = rs.getString("cpf");
-                String telefone = rs.getString("telefone");
-                Hospede entidade = new Hospede(id, nome, cpf, telefone);
+            try(ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    String nome = rs.getString("nome");
+                    String cpf = rs.getString("cpf");
+                    String telefone = rs.getString("telefone");
+                    Hospede entidade = new Hospede(id, nome, cpf, telefone);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,18 +111,19 @@ public class DAOHospede implements IDAOPessoa<Hospede> {
 
    @Override
     public Hospede buscarCpf(String cpf) {
-        String sql = "SELECT * FROM funcionario WHERE cpf = ?";
+        String sql = "SELECT * FROM hospede WHERE cpf = ?";
 
         try (PreparedStatement stmt = dbConnect(sql)) {
             stmt.setString(1, cpf);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.next()) {
-                int id = rs.getInt("id");
-                String nome = rs.getString("nome");
-                String cargo = rs.getString("cargo");
-                Hospede entidade = new Hospede(id, nome, cpf, cargo);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if(rs.next()) {
+                    int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    String telefone = rs.getString("telefone");
+                    Hospede entidade = new Hospede(id, nome, cpf, telefone);
 
-                return entidade;
+                    return entidade;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,8 +137,8 @@ public class DAOHospede implements IDAOPessoa<Hospede> {
         List<Hospede> entidades = new ArrayList<Hospede>();
         String sql = "SELECT * FROM hospede";
 
-        try (PreparedStatement stmt = dbConnect(sql)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = dbConnect(sql);
+                ResultSet rs = stmt.executeQuery();) {
             while(rs.next()) {
                 String nome = rs.getString("nome");
                 String cpf = rs.getString("cpf");
