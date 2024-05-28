@@ -73,17 +73,11 @@ public class DBConfig {
           stmt.execute(instrucao);
       }
     } catch (SQLException e) {
-<<<<<<< HEAD
       // Troca lista de texto de erro de exepção por final String.
       Misc.text(Misc.DATABASE_CONNECTION_ERROR);
     } catch (IOException e) {
       // Troca lista de texto de erro de exepção por final String.
       Misc.text(Misc.DATABASE_CONNECTION_ERROR);
-=======
-      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exceção por final String.
-    } catch (IOException e) {
-      Misc.text(Misc.DATABASE_CONNECTION_ERROR); // Troca lista de texto de erro de exceção por final String.
->>>>>>> 7fce2d865b68a8e09d0f0bf4f4b1dbbf3272d543
     }
   }
 }
