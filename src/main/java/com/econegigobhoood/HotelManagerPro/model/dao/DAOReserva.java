@@ -113,7 +113,7 @@ public class DAOReserva implements IDAO<Reserva> {
 
         String updateSQL = "UPDATE reserva " +
                            "SET id_res_status_fk = 3 " +
-                           "WHERE dt_entrada < CURRENT_DATE";
+                           "WHERE dt_entrada < CURRENT_DATE AND id_res_status_fk = 1";
 
         // Execute update
         try (PreparedStatement updateStmt = dbConnect(updateSQL)) {
@@ -162,7 +162,7 @@ public class DAOReserva implements IDAO<Reserva> {
        
         String updateSQL = "UPDATE reserva " +
                            "SET id_res_status_fk = 3 " +
-                           "WHERE dt_entrada < CURRENT_DATE";
+                           "WHERE dt_entrada < CURRENT_DATE AND id_res_status_fk = 1";
         // Execute update
         try (PreparedStatement updateStmt = dbConnect(updateSQL)) {
             updateStmt.executeUpdate();
@@ -210,7 +210,7 @@ public class DAOReserva implements IDAO<Reserva> {
 
         String updateSQL = "UPDATE reserva " +
                            "SET id_res_status_fk = 3 " +
-                           "WHERE dt_entrada < CURRENT_DATE";
+                           "WHERE dt_entrada < CURRENT_DATE AND id_res_status_fk = 1";
     
         // Obtém a conexão
         Connection connection = null;
